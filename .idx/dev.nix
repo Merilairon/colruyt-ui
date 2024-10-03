@@ -22,16 +22,10 @@
     previews = {
       enable = true;
       previews = {
-        # web = {
-        #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
-        #   # and show it in IDX's web preview panel
-        #   command = ["npm" "run" "dev"];
-        #   manager = "web";
-        #   env = {
-        #     # Environment variables to set for your server
-        #     PORT = "$PORT";
-        #   };
-        # };
+        web = {
+          command = ["npm" "run" "dev" "--" "--port" "$PORT"];
+          manager = "web";
+        };
       };
     };
     # Workspace lifecycle hooks
@@ -40,6 +34,7 @@
       onCreate = {
         # Example: install JS dependencies from NPM
         # npm-install = "npm install";
+        npm-install = "npm ci --no-audit --prefer-offline --no-progress --timing";
         # Open editors for the following files by default, if they exist:
         default.openFiles = [ ".idx/dev.nix" "README.md" ];
       };
