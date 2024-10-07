@@ -3,6 +3,10 @@
 	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 </script>
 
+<svelte:head>
+	<link rel="icon" type="image/svg" href="/images/colruit-logo.svg" />
+</svelte:head>
+
 <div class="relative px-8">
 	<Navbar color="form" class="fixed start-0 top-0 z-20 w-full border-b px-2 py-2.5 sm:px-4">
 		<NavBrand href="/">
