@@ -82,45 +82,43 @@
 	}
 </script>
 
-<div class="p-8">
-	<div
-		class="grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7"
-	>
-		{#each products as product, index}
-			{#if $favourites.includes(product.technicalArticleNumber)}
-				<Card padding="sm" data-index={product.technicalArticleNumber}>
-					<Button
-						on:click={() => handleFavourite(product.technicalArticleNumber)}
-						pill={true}
-						class="h-8 w-8 !p-2"
-						style="margin-left: auto; order: 0;"
-					>
-						{#if $favourites.includes(product.technicalArticleNumber)}
-							<HeartSolid class="h-6 w-6" />
-						{:else}
-							<HeartOutline class="h-6 w-6" />
-						{/if}
-					</Button>
-					<a href="/" class="card-image">
-						<img src={product.squareImage} alt={product.name} />
+<div
+	class="grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7"
+>
+	{#each products as product, index}
+		{#if $favourites.includes(product.technicalArticleNumber)}
+			<Card padding="sm" data-index={product.technicalArticleNumber}>
+				<Button
+					on:click={() => handleFavourite(product.technicalArticleNumber)}
+					pill={true}
+					class="h-8 w-8 !p-2"
+					style="margin-left: auto; order: 0;"
+				>
+					{#if $favourites.includes(product.technicalArticleNumber)}
+						<HeartSolid class="h-6 w-6" />
+					{:else}
+						<HeartOutline class="h-6 w-6" />
+					{/if}
+				</Button>
+				<a href="/" class="card-image">
+					<img src={product.squareImage} alt={product.name} />
+				</a>
+				<div class="px-5 pb-5">
+					<a href="/">
+						<h5
+							class="text-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
+						>
+							{product.name}
+						</h5>
 					</a>
-					<div class="px-5 pb-5">
-						<a href="/">
-							<h5
-								class="text-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
-							>
-								{product.name}
-							</h5>
-						</a>
-					</div>
-					<div class="flex items-center justify-between">
-						<Badge slot="text" class="ms-3">{product.difference * 100}%</Badge>
-						<span class="text font-bold text-gray-900 dark:text-white">€{product.price}</span>
-					</div>
-				</Card>
-			{/if}
-		{/each}
-	</div>
+				</div>
+				<div class="flex items-center justify-between">
+					<Badge slot="text" class="ms-3">{product.difference * 100}%</Badge>
+					<span class="text font-bold text-gray-900 dark:text-white">€{product.price}</span>
+				</div>
+			</Card>
+		{/if}
+	{/each}
 </div>
 
 <style>

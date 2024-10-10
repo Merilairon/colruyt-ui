@@ -1,6 +1,8 @@
 <script>
 	import '../app.css';
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
+	import { page } from '$app/stores';
+	$: activeUrl = $page.url.pathname;
 </script>
 
 <svelte:head>
@@ -16,14 +18,17 @@
 			>
 		</NavBrand>
 		<NavHamburger />
-		<NavUl>
-			<NavLi href="/">Products</NavLi>
+		<NavUl {activeUrl}>
+			<NavLi href="/products">Products</NavLi>
 			<NavLi href="/changes">Interesting Changes</NavLi>
 			<NavLi href="/promotions">Promotions</NavLi>
 			<NavLi href="/favorites">Favorites</NavLi>
 		</NavUl>
+		<DarkMode />
 	</Navbar>
 </div>
 <div style="margin-top: 3.5em">
-	<slot></slot>
+	<div class="p-8">
+		<slot></slot>
+	</div>
 </div>
