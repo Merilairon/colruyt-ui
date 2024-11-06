@@ -30,8 +30,13 @@
 				</h5>
 			</div>
 			<div class="flex items-center justify-between">
-				<Badge slot="text" class="ms-3">{product.difference || 0 * 100}%</Badge>
-				<span class="text font-bold text-gray-900 dark:text-white">€{product.price.basicPrice}</span
+				<Badge slot="text" class="ms-3"
+					>{product?.pricechange?.priceChange > 0 ? '+' : ''}{Math.floor(
+						product?.pricechange?.priceChangePercentage * 10000 || 0
+					) / 100}%</Badge
+				>
+				<span class="text font-bold text-gray-900 dark:text-white"
+					>€{product.prices[0]?.basicPrice}</span
 				>
 			</div>
 		</a>

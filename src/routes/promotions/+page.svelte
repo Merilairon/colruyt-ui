@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { Badge, Button, Card, Spinner, Select, Label } from 'flowbite-svelte';
-	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
+	import {
+		Badge,
+		Button,
+		Card,
+		Spinner,
+		Select,
+		Label,
+		Pagination,
+		PaginationItem
+	} from 'flowbite-svelte';
+	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import promotions from '../../stores/promotions';
 
+	let pageSize = 60;
+	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
 	let filteredPromotions = $promotions;
 
-	//TODO: add real data
-	//TODO: add infinite scroll
+	//TODO: add infinite scroll or something
 	onMount(async () => {
-		//TODO: change to env value
-		fetch('https://run.mocky.io/v3/fb6a43de-990e-4519-89cb-72984c606cc8')
-			.then((response) => response.json())
-			.then((data) => {
-				promotions.set(data);
-				filteredPromotions = $promotions;
-			})
-			.catch((error) => {
-				console.log(error);
-				return [];
-			});
+		await fetchPromotions(helper.page);
 	});
 	let selectedSortOption = '';
 	let sortOptions = [
@@ -27,14 +27,48 @@
 		{ value: 'desc', name: 'Descending' }
 	];
 
+	function fetchPromotions(page: number) {
+		fetch(`${'http://localhost:3000'}/promotions?page=${page}&size=${pageSize}`)
+			.then((response) => response.json())
+			.then((data) => {
+				helper.total = data.total;
+				promotions.set(data.promotions);
+				filteredPromotions = $promotions;
+			})
+			.catch((error) => {
+				console.log(error);
+				return [];
+			});
+	}
+
+	function previous() {
+		if (helper.page > 1) {
+			helper.page--;
+			helper.start = helper.start - pageSize;
+			helper.end = helper.end - pageSize;
+			fetchPromotions(helper.page);
+		}
+	}
+	function next() {
+		if (helper.end < helper.total) {
+			helper.page++;
+			helper.start = helper.start + pageSize;
+			helper.end = helper.end + pageSize;
+			if (helper.end > helper.total) {
+				helper.end = helper.total;
+			}
+			fetchPromotions(helper.page);
+		}
+	}
+
 	function sortPromotions() {
 		if (selectedSortOption === 'asc') {
 			filteredPromotions = [...$promotions].sort(
-				(a, b) => a.benefit[0].benefitPercentage - b.benefit[0].benefitPercentage
+				(a, b) => a.benefits[0].benefitPercentage - b.benefits[0].benefitPercentage
 			);
 		} else if (selectedSortOption === 'desc') {
 			filteredPromotions = [...$promotions].sort(
-				(a, b) => b.benefit[0].benefitPercentage - a.benefit[0].benefitPercentage
+				(a, b) => b.benefits[0].benefitPercentage - a.benefits[0].benefitPercentage
 			);
 		} else {
 			console.log('sorting');
@@ -65,6 +99,16 @@
 			<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
 		</div>
 	</div>
+	<div class="mb-4 flex flex-col items-center justify-center gap-2">
+		<div class="text-sm text-gray-700 dark:text-gray-400">
+			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			to
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
+			of
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
+			Entries
+		</div>
+	</div>
 
 	<div
 		class="grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
@@ -73,49 +117,72 @@
 			<Card
 				padding="sm"
 				class={promotion.text && promotion?.text[0]?.text.includes('TOP promo')
-					? 'shadow-orange-500'
-					: ''}
+					? 'relative shadow-orange-500'
+					: 'relative'}
 			>
-				<div class="card">
-					<a href="/promotions/{promotion.promotionId}">
-						<div class="card-image">
-							<img src={promotion.highestSalesRank?.thumbnail} alt={promotion.name} />
-						</div>
-						<div class="px-5 pb-5">
-							<div>
-								<h5
-									class="text-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
-								>
-									{#if promotion.text}
-										{promotion?.text[0]?.text}
-									{:else}
-										{promotion?.highestSalesRank?.seoBrand}
-									{/if}
-								</h5>
-							</div>
-						</div>
-						<div class="flex items-center justify-between">
-							<Badge slot="text" class="ms-3"
-								>-
-								{#if promotion.benefit[0].benefitPercentage}
-									{promotion.benefit[0].benefitPercentage}%
-								{:else}
-									€{promotion.benefit[0].benefitAmount / 100}
-								{/if}
-							</Badge>
-							<span class="text font-bold text-red-700 dark:text-white"
-								>Vanaf {promotion.benefit[0].minLimit} {promotion.benefit[0].limitUnit}</span
+				<a href="/promotions/{promotion.promotionId}" class="mb-4">
+					<div class="card-image">
+						<img src={promotion.products[0]?.thumbNail} alt={promotion.promotionId} />
+					</div>
+					<div class="px-5 pb-5">
+						<div>
+							<h5
+								class="text-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
 							>
+								{#if promotion.text}
+									{promotion?.text[0]?.text}
+								{:else if promotion.seoBrandList}
+									{#each promotion.seoBrandList.slice(0, 5) as brandName}
+										{brandName}<br />
+									{/each}
+								{/if}
+							</h5>
 						</div>
-					</a>
+					</div>
+
+					<div class="promo-info-left">
+						<Badge slot="text" class="ms-3"
+							>-
+							{#if promotion.benefits[0].benefitPercentage}
+								{promotion.benefits[0].benefitPercentage}%
+							{:else}
+								€{promotion.benefits[0].benefitAmount / 100}
+							{/if}
+						</Badge>
+					</div>
+					<div class="promo-info-right">
+						<span class="text font-bold text-red-700 dark:text-white"
+							>Vanaf {promotion.benefits[0]?.minLimit} {promotion.benefits[0]?.limitUnit}</span
+						>
+					</div>
+
 					{#if promotion.text && promotion.text[0]?.text?.includes('TOP promo')}
 						<div class="top-promo font-bold">
 							<span class="text-orange-500">TOP</span> Promo
 						</div>
 					{/if}
-				</div>
+				</a>
 			</Card>
 		{/each}
+	</div>
+	<div class="mb-4 flex flex-col items-center justify-center gap-2">
+		<div class="text-sm text-gray-700 dark:text-gray-400">
+			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			to
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
+			of
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
+			Entries
+		</div>
+
+		<Pagination pages={[]} on:next={next} on:previous={previous} table large>
+			<PaginationItem slot="prev">
+				<ArrowLeftOutline class="h-5 w-5" />
+			</PaginationItem>
+			<PaginationItem slot="next">
+				<ArrowRightOutline class="h-5 w-5" />
+			</PaginationItem>
+		</Pagination>
 	</div>
 {/if}
 
@@ -149,6 +216,18 @@
 		padding: 5px;
 		position: absolute;
 		top: 0;
+		left: 0;
+	}
+
+	.promo-info-right {
+		position: absolute;
+		bottom: 1em;
+		right: 1em;
+	}
+
+	.promo-info-left {
+		position: absolute;
+		bottom: 1em;
 		left: 0;
 	}
 </style>
