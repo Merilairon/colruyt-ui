@@ -3,57 +3,58 @@
 		Badge,
 		Button,
 		Card,
-		Spinner,
-		Select,
 		Label,
 		Pagination,
-		PaginationItem
+		PaginationItem,
+		Select,
+		Spinner
 	} from 'flowbite-svelte';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
-	import { onMount } from 'svelte';
 	import promotions from '../../stores/promotions';
+	import { onMount } from 'svelte';
 
 	let pageSize = 60;
 	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
 	let filteredPromotions = $promotions;
-
-	//TODO: add infinite scroll or something
-	onMount(async () => {
-		await fetchPromotions(helper.page);
-	});
-	let selectedSortOption = '';
+	let selectedSortOption = 'desc';
 	let sortOptions = [
 		{ value: 'asc', name: 'Ascending' },
 		{ value: 'desc', name: 'Descending' }
 	];
 
-	function fetchPromotions(page: number) {
-		fetch(`${'http://localhost:3000'}/promotions?page=${page}&size=${pageSize}`)
-			.then((response) => response.json())
-			.then((data) => {
-				helper.total = data.total;
-				promotions.set(data.promotions);
-				filteredPromotions = $promotions;
-			})
-			.catch((error) => {
-				console.log(error);
-				return [];
-			});
+	//TODO: add infinite scroll or something
+	onMount(async () => {
+		await fetchPromotions(helper.page);
+	});
+
+	async function fetchPromotions(page: number) {
+		try {
+			const response = await fetch(
+				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=benefit&sort=${selectedSortOption}`
+			);
+			const data = await response.json();
+			helper.total = data.total;
+			promotions.set(data.promotions);
+			filteredPromotions = $promotions;
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	function previous() {
 		if (helper.page > 1) {
 			helper.page--;
-			helper.start = helper.start - pageSize;
-			helper.end = helper.end - pageSize;
+			helper.start -= pageSize;
+			helper.end -= pageSize;
 			fetchPromotions(helper.page);
 		}
 	}
+
 	function next() {
 		if (helper.end < helper.total) {
 			helper.page++;
-			helper.start = helper.start + pageSize;
-			helper.end = helper.end + pageSize;
+			helper.start += pageSize;
+			helper.end += pageSize;
 			if (helper.end > helper.total) {
 				helper.end = helper.total;
 			}
@@ -61,30 +62,22 @@
 		}
 	}
 
-	function sortPromotions() {
-		if (selectedSortOption === 'asc') {
-			filteredPromotions = [...$promotions].sort(
-				(a, b) => a.benefits[0].benefitPercentage - b.benefits[0].benefitPercentage
-			);
-		} else if (selectedSortOption === 'desc') {
-			filteredPromotions = [...$promotions].sort(
-				(a, b) => b.benefits[0].benefitPercentage - a.benefits[0].benefitPercentage
-			);
-		} else {
-			console.log('sorting');
-
-			filteredPromotions = [...$promotions];
-		}
+	async function sortPromotions() {
+		await fetchPromotions(helper.page);
 	}
 
-	function resetSort() {
-		selectedSortOption = '';
-		sortPromotions();
+	async function resetSort() {
+		selectedSortOption = 'desc';
+		await sortPromotions();
 	}
 </script>
 
 {#if $promotions.length === 0}
-	<div class="text-center"><Spinner /></div>
+	<div class="loading-state">
+		<div class="text-center">
+			<Spinner />
+		</div>
+	</div>
 {:else}
 	<div class="mb-5 flex w-80 justify-center">
 		<Label class="mr-2 w-60 ">
@@ -116,21 +109,25 @@
 		{#each filteredPromotions as promotion, index}
 			<Card
 				padding="sm"
-				class={promotion.text && promotion?.text[0]?.text.includes('TOP promo')
+				class={promotion.promotionTexts && promotion.promotionTexts[0]?.text.includes('TOP promo')
 					? 'relative shadow-orange-500'
 					: 'relative'}
 			>
 				<a href="/promotions/{promotion.promotionId}" class="mb-4">
 					<div class="card-image">
-						<img src={promotion.products[0]?.thumbNail} alt={promotion.promotionId} />
+						<img
+							class="rounded-xl"
+							src={promotion.products[0]?.thumbNail}
+							alt={promotion.promotionId}
+						/>
 					</div>
 					<div class="px-5 pb-5">
 						<div>
 							<h5
 								class="text-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
 							>
-								{#if promotion.text}
-									{promotion?.text[0]?.text}
+								{#if promotion.promotionTexts && promotion.promotionTexts.length > 0}
+									{promotion.promotionTexts[0]?.text}
 								{:else if promotion.seoBrandList}
 									{#each promotion.seoBrandList.slice(0, 5) as brandName}
 										{brandName}<br />
@@ -141,22 +138,19 @@
 					</div>
 
 					<div class="promo-info-left">
-						<Badge slot="text" class="ms-3"
-							>-
-							{#if promotion.benefits[0].benefitPercentage}
-								{promotion.benefits[0].benefitPercentage}%
-							{:else}
-								€{promotion.benefits[0].benefitAmount / 100}
-							{/if}
+						<Badge slot="text" class="ms-3">
+							-{promotion.benefits[0].benefitPercentage
+								? `${promotion.benefits[0].benefitPercentage}%`
+								: `€${promotion.benefits[0].benefitAmount / 100}`}
 						</Badge>
 					</div>
 					<div class="promo-info-right">
 						<span class="text font-bold text-red-700 dark:text-white"
-							>Vanaf {promotion.benefits[0]?.minLimit} {promotion.benefits[0]?.limitUnit}</span
+							>From {promotion.benefits[0]?.minLimit} {promotion.benefits[0]?.limitUnit}</span
 						>
 					</div>
 
-					{#if promotion.text && promotion.text[0]?.text?.includes('TOP promo')}
+					{#if promotion.promotionTexts && promotion.promotionTexts[0]?.text?.includes('TOP promo')}
 						<div class="top-promo font-bold">
 							<span class="text-orange-500">TOP</span> Promo
 						</div>
@@ -187,8 +181,10 @@
 {/if}
 
 <style>
-	.card {
-		position: relative;
+	.loading-state {
+		display: grid;
+		place-items: center;
+		min-height: 200px;
 	}
 
 	.card-image {

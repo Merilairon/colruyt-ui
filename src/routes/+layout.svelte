@@ -1,34 +1,58 @@
-<script>
+<script lang="ts">
 	import '../app.css';
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
-	import { page } from '$app/stores';
+	import {Button, DarkMode, Navbar, NavBrand, NavHamburger, NavLi, NavUl} from 'flowbite-svelte';
+	import {page} from '$app/stores';
+	import {CaretUpSolid} from "flowbite-svelte-icons";
+	import {browser} from '$app/environment';
+	import {onMount} from "svelte";
+
 	$: activeUrl = $page.url.pathname;
+    let hideSpeedDial = true;
+
+    onMount(() => {
+        if (browser) {
+            window.addEventListener('scroll', () => {
+                hideSpeedDial = window.scrollY <= 200;
+            });
+        }
+    });
+
+    function scrollToTop() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/svg" href="/images/colruit-logo.svg" />
+    <link href="/images/colruit-logo.svg" rel="icon" type="image/svg"/>
 </svelte:head>
 
 <div class="relative px-8">
-	<Navbar color="form" class="fixed start-0 top-0 z-20 w-full border-b px-2 py-2.5 sm:px-4">
-		<NavBrand href="/">
-			<img class="me-3 h-6 sm:h-9" alt="Colruit Logo" src="/images/colruit-logo.svg" />
-			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-				>Colruit</span
-			>
-		</NavBrand>
-		<NavHamburger />
-		<NavUl {activeUrl}>
-			<NavLi href="/products">Products</NavLi>
-			<NavLi href="/changes">Interesting Changes</NavLi>
-			<NavLi href="/promotions">Promotions</NavLi>
-			<NavLi href="/favorites">Favorites</NavLi>
-		</NavUl>
-		<DarkMode />
-	</Navbar>
+    <Navbar class="fixed start-0 top-0 z-20 w-full border-b px-2 py-2.5 sm:px-4" color="form">
+        <NavBrand href="/">
+            <img alt="Colruit Logo" class="me-3 h-6 sm:h-9" src="/images/colruit-logo.svg"/>
+            <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
+            >Colruit</span
+            >
+        </NavBrand>
+        <NavHamburger/>
+        <NavUl {activeUrl}>
+            <NavLi href="/products">Products</NavLi>
+            <NavLi href="/changes">Interesting Changes</NavLi>
+            <NavLi href="/promotions">Promotions</NavLi>
+            <NavLi href="/favourites">Favourites</NavLi>
+        </NavUl>
+        <DarkMode/>
+    </Navbar>
 </div>
 <div style="margin-top: 3.5em">
-	<div class="p-8">
-		<slot></slot>
-	</div>
+    <div class="p-8">
+        <slot></slot>
+    </div>
 </div>
+
+{#if !hideSpeedDial}
+    <Button on:click={scrollToTop} pill={true} class="!p-3 fixed end-6 bottom-6">
+        <CaretUpSolid class="w-8 h-8"/>
+    </Button>
+{/if}

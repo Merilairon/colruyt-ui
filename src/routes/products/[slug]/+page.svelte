@@ -1,23 +1,29 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, Chart } from 'flowbite-svelte';
+	import { Button, Chart, Spinner } from 'flowbite-svelte';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
-	import products from '../../../stores/products';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
-	let product = $products.find((p) => p.technicalArticleNumber === $page.params.slug);
+	let previousPage: string = '/products';
 
-	let options = {
+	afterNavigate(({ from }) => {
+		previousPage = from?.url.pathname || previousPage;
+	});
+
+	let product: any = undefined;
+	let options: any = {
+		theme: {
+			mode: 'dark'
+		},
 		chart: {
 			height: '400px',
 			maxWidth: '100%',
 			type: 'area' as const,
 			fontFamily: 'Inter, sans-serif',
+			background: '#475569',
 			dropShadow: {
 				enabled: false
-			},
-			stroke: {
-				curve: 'straight'
 			},
 			toolbar: {
 				show: true
@@ -35,6 +41,9 @@
 				stops: [0, 90, 100]
 			}
 		},
+		stroke: {
+			curve: 'stepline'
+		},
 		tooltip: {
 			enabled: true,
 			x: {
@@ -45,48 +54,86 @@
 			{
 				name: 'Price',
 				// return the prices sorted by date
-				data: product.prices
-					.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
-					.map((p: any) => {
-						return {
-							x: p.date,
-							y: p.basicPrice
-						};
-					}),
+				data: [],
 				color: '#f5782d'
 			}
-		]
+		],
+		xaxis: {
+			type: 'datetime'
+		}
 	};
 
+	onMount(async () => {
+		try {
+			let response = await fetch(
+				`https://colruyt.merilairon.com/api/products/${$page.params.slug}`
+			);
+			product = await response.json();
+			options = {
+				...options,
+				series: [
+					{
+						...options.series[0],
+						data: product?.prices
+							.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
+							.map((p: any) => {
+								return {
+									x: p.date,
+									y: p.basicPrice
+								};
+							})
+					}
+				]
+			};
+		} catch (error) {
+			console.log(error);
+		}
+	});
+
 	function goBack() {
-		goto('/products');
+		goto(previousPage);
 	}
 </script>
 
 <div>
 	<Button on:click={goBack}>
-		<ArrowLeftOutline class="ms-2 h-5 w-5" /> Back
+		<ArrowLeftOutline class="ms-2 h-5 w-5" />
+		Back
 	</Button>
 </div>
-{#if product}
+
+{#if product && product.message !== 'Product not found'}
 	<div class="container mx-auto px-4">
 		<div class="flex flex-col md:flex-row">
 			<div class="md:w-1/2">
-				<img src={product.squareImage} alt={product.name} class="w-half" />
+				<img src={product.squareImage} alt={product.LongName} class="w-half rounded-xl" />
 			</div>
 			<div class="md:w-1/2 md:pl-8">
 				<h1 class="mb-4 text-3xl font-bold dark:text-white">{product.LongName}</h1>
 				<div class="mb-4 flex items-center">
-					<span class="text-2xl font-bold dark:text-white">€{product.prices[0].basicPrice}</span>
+					<span class="text-2xl font-bold dark:text-white">€{product?.prices[0]?.basicPrice}</span>
 					<span class="ml-2 text-gray-500 dark:text-white">incl. VAT</span>
 				</div>
 				<Chart {options} />
 			</div>
 		</div>
 	</div>
+{:else if product && product.message === 'Product not found'}
+	<div class="text-center">
+		<h1 class="text-3xl font-bold dark:text-white">Product not found</h1>
+	</div>
 {:else}
-	<p>Loading product...</p>
+	<div class="loading-state">
+		<div class="text-center">
+			<Spinner />
+		</div>
+	</div>
 {/if}
 
 <style>
+	.loading-state {
+		display: grid;
+		place-items: center;
+		min-height: 200px;
+	}
 </style>

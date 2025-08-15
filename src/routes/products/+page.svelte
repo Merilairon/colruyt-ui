@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Search, Spinner, Pagination, PaginationItem } from 'flowbite-svelte';
-	import { debounce } from '../../lib/debounce';
+	import { Pagination, PaginationItem, Search, Spinner } from 'flowbite-svelte';
+	import { debounce } from '$lib/debounce';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import products from '../../stores/products';
 	import { onMount } from 'svelte';
@@ -33,9 +33,10 @@
 			(event.target as HTMLInputElement).value.toLowerCase()
 		);
 	}
+
 	function fetchProducts(page: number, isAvailable: boolean, searchValue: string | undefined) {
 		fetch(
-			`${'http://localhost:3000'}/products?isAvailable=${isAvailable}&page=${page}&size=${pageSize}${searchValue ? `&search=${searchValue}` : ''}`
+			`${'https://colruyt.merilairon.com/api'}/products?isAvailable=${isAvailable}&page=${page}&size=${pageSize}${searchValue ? `&search=${searchValue}` : ''}`
 		)
 			.then((response) => response.json())
 			.then((data) => {
@@ -60,6 +61,7 @@
 			fetchProducts(helper.page, !includeUnavailable, undefined);
 		}
 	}
+
 	function next() {
 		if (helper.end < helper.total) {
 			helper.page++;
@@ -74,7 +76,11 @@
 </script>
 
 {#if $products.length === 0}
-	<div class="text-center"><Spinner /></div>
+	<div class="loading-state">
+		<div class="text-center">
+			<Spinner />
+		</div>
+	</div>
 {:else}
 	<Search class="mb-4" on:input={searchProductsDebounced}></Search>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
@@ -115,3 +121,11 @@
 		</Pagination>
 	</div>
 {/if}
+
+<style>
+	.loading-state {
+		display: grid;
+		place-items: center;
+		min-height: 200px;
+	}
+</style>
