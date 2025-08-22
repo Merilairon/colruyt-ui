@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Button, Chart, Spinner } from 'flowbite-svelte';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
 	import { afterNavigate, goto } from '$app/navigation';
@@ -52,10 +52,16 @@
 		},
 		series: [
 			{
-				name: 'Price',
+				name: 'Price P1',
 				// return the prices sorted by date
 				data: [],
 				color: '#f5782d'
+			},
+			{
+				name: 'Price P2',
+				// return the prices sorted by date
+				data: [],
+				color: '#f52d5a'
 			}
 		],
 		xaxis: {
@@ -65,8 +71,8 @@
 
 	onMount(async () => {
 		try {
-			let response = await fetch(
-				`https://colruyt.merilairon.com/api/products/${$page.params.slug}`
+			const response = await fetch(
+				`https://colruyt.merilairon.com/api/products/${page.params.slug}`
 			);
 			product = await response.json();
 			options = {
@@ -75,11 +81,24 @@
 					{
 						...options.series[0],
 						data: product?.prices
+							.map((p: any) => p)
 							.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
 							.map((p: any) => {
 								return {
 									x: p.date,
 									y: p.basicPrice
+								};
+							})
+					},
+					{
+						...options.series[1],
+						data: product?.prices
+							.map((p: any) => p)
+							.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
+							.map((p: any) => {
+								return {
+									x: p.date,
+									y: p.quantityPrice
 								};
 							})
 					}
@@ -114,6 +133,17 @@
 					<span class="text-2xl font-bold dark:text-white">€{product?.prices[0]?.basicPrice}</span>
 					<span class="ml-2 text-gray-500 dark:text-white">incl. VAT</span>
 				</div>
+
+				{#if product.prices[0]?.quantityPrice}
+					<div class="mb-4 flex items-center">
+						<span class="text-2xl font-bold text-orange-500 dark:text-orange-500"
+							>€{product?.prices[0]?.quantityPrice}</span
+						>
+						<span class="ml-2 text-orange-500 dark:text-orange-500"
+							>incl. VAT from {product?.prices[0]?.quantityPriceQuantity}</span
+						>
+					</div>
+				{/if}
 				<Chart {options} />
 			</div>
 		</div>

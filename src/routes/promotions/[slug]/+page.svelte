@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { Badge, Button, Spinner } from 'flowbite-svelte';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
@@ -13,7 +13,7 @@
 	onMount(async () => {
 		try {
 			let response = await fetch(
-				`https://colruyt.merilairon.com/api/promotions/${$page.params.slug}`
+				`https://colruyt.merilairon.com/api/promotions/${page.params.slug}`
 			);
 			promotion = await response.json();
 		} catch (error) {

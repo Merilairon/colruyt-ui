@@ -1,18 +1,35 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { Pagination, PaginationItem, Search, Spinner } from 'flowbite-svelte';
 	import { debounce } from '$lib/debounce';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import products from '../../stores/products';
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
+	import { replaceState } from '$app/navigation';
 
 	let pageSize = 60;
 	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
 	let includeUnavailable = false;
 	let filteredProducts = $products;
+	let savedSearchValue = '';
 
 	onMount(async () => {
-		await fetchProducts(helper.page, !includeUnavailable, undefined);
+		if (page.url.searchParams.get('includeUnavailable')) {
+			includeUnavailable = page.url.searchParams.get('includeUnavailable') === 'true';
+		}
+		if (page.url.searchParams.get('page')) {
+			helper.page = parseInt(page.url.searchParams.get('page') as string);
+			helper.start += pageSize * (helper.page - 1);
+			helper.end = helper.start + pageSize - 1;
+		}
+		if (page.url.searchParams.get('pageSize')) {
+			pageSize = parseInt(page.url.searchParams.get('pageSize') as string);
+		}
+		if (page.url.searchParams.get('searchValue')) {
+			savedSearchValue = page.url.searchParams.get('searchValue') as string;
+		}
+		await fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
 	});
 
 	const searchProductsDebounced = debounce(searchProducts, 1000);
@@ -27,10 +44,18 @@
 		helper.start = 1;
 		helper.end = pageSize;
 
+		savedSearchValue = (event.target as HTMLInputElement).value.toLowerCase();
+
+		page.url.searchParams.set('searchValue', savedSearchValue);
+		page.url.searchParams.set('page', helper.page.toString());
+		page.url.searchParams.set('pageSize', pageSize.toString());
+
+		replaceState(page.url, page.state);
+
 		fetchProducts(
 			helper.page,
 			!includeUnavailable,
-			(event.target as HTMLInputElement).value.toLowerCase()
+			savedSearchValue ? savedSearchValue : undefined
 		);
 	}
 
@@ -58,7 +83,13 @@
 			helper.page--;
 			helper.start = helper.start - pageSize;
 			helper.end = helper.end - pageSize;
-			fetchProducts(helper.page, !includeUnavailable, undefined);
+
+			page.url.searchParams.set('searchValue', savedSearchValue);
+			page.url.searchParams.set('page', helper.page.toString());
+			page.url.searchParams.set('pageSize', pageSize.toString());
+
+			replaceState(page.url, page.state);
+			fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
 		}
 	}
 
@@ -70,7 +101,13 @@
 			if (helper.end > helper.total) {
 				helper.end = helper.total;
 			}
-			fetchProducts(helper.page, !includeUnavailable, undefined);
+
+			page.url.searchParams.set('searchValue', savedSearchValue);
+			page.url.searchParams.set('page', helper.page.toString());
+			page.url.searchParams.set('pageSize', pageSize.toString());
+
+			replaceState(page.url, page.state);
+			fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
 		}
 	}
 </script>
@@ -82,7 +119,7 @@
 		</div>
 	</div>
 {:else}
-	<Search class="mb-4" on:input={searchProductsDebounced}></Search>
+	<Search class="mb-4" value={savedSearchValue} on:input={searchProductsDebounced}></Search>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
 			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>

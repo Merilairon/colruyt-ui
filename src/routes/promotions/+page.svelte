@@ -109,7 +109,8 @@
 		{#each filteredPromotions as promotion, index}
 			<Card
 				padding="sm"
-				class={promotion.promotionTexts && promotion.promotionTexts[0]?.text.includes('TOP promo')
+				class={promotion.promotionTexts &&
+				promotion.promotionTexts[0]?.text?.toLowerCase().includes('top promo')
 					? 'relative shadow-orange-500'
 					: 'relative'}
 			>
@@ -150,7 +151,9 @@
 						>
 					</div>
 
-					{#if promotion.promotionTexts && promotion.promotionTexts[0]?.text?.includes('TOP promo')}
+					{#if promotion.promotionTexts && promotion.promotionTexts[0]?.text
+							?.toLowerCase()
+							.includes('top promo')}
 						<div class="top-promo font-bold">
 							<span class="text-orange-500">TOP</span> Promo
 						</div>

@@ -35,10 +35,28 @@
 						product?.pricechange?.priceChangePercentage * 10000 || 0
 					) / 100}%
 				</Badge>
-				<span class="text font-bold text-gray-900 dark:text-white"
-					>€{product.prices[0]?.basicPrice}</span
-				>
+				<div class="text-right">
+					<span class="text-sm font-bold text-gray-900 dark:text-white"
+						>€{product.prices[0]?.basicPrice}</span
+					>
+				</div>
 			</div>
+			{#if product.prices[0]?.quantityPrice}
+				<div class="flex items-center justify-between">
+					<!--
+					<Badge class="ms-3" slot="text"
+						>{product?.pricechange?.priceChange > 0 ? '+' : ''}{Math.floor(
+							product?.pricechange?.priceChangePercentage * 10000 || 0
+						) / 100}%
+					</Badge>-->
+					<div class="ms-3"></div>
+					<div class="text-right">
+						<span class="text font-bold text-orange-500 dark:text-orange-500"
+							>€{product.prices[0].quantityPrice} from {product.prices[0].quantityPriceQuantity}
+						</span>
+					</div>
+				</div>
+			{/if}
 		</a>
 		{#if includeFavouriteButton}
 			<div class="favouriteBtn">

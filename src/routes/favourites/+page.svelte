@@ -58,7 +58,7 @@
 </script>
 
 {#if $favourites.length === 0}
-	<div class="text-center">Add some favourites to see them here</div>
+	<div class="text-center text-gray-900 dark:text-white">Add some favourites to see them here</div>
 {:else if filteredProducts.length === 0}
 	<div class="loading-state">
 		<div class="text-center">
