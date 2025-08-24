@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { Badge, Button, Spinner } from 'flowbite-svelte';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
 
 	let previousPage: string = '/promotions';
+
+	afterNavigate(({ from }) => {
+		previousPage =
+			from?.url.href.replace(from?.url.protocol + '//' + from?.url.host, '') || previousPage;
+	});
 
 	let promotion: any = undefined;
 
@@ -72,7 +77,7 @@
 		<div class="products-panel">
 			<h1 class="mb-4 text-3xl font-bold dark:text-white">Products:</h1>
 			<div
-				class="mb-4 grid auto-cols-max grid-flow-col grid-rows-1 gap-5 overflow-scroll"
+				class="mb-4 grid auto-cols-max grid-flow-col grid-rows-1 gap-5 overflow-scroll overflow-y-hidden"
 				role="list"
 				aria-label="Product list"
 			>

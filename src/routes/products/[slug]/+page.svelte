@@ -8,7 +8,8 @@
 	let previousPage: string = '/products';
 
 	afterNavigate(({ from }) => {
-		previousPage = from?.url.pathname || previousPage;
+		previousPage =
+			from?.url.href.replace(from?.url.protocol + '//' + from?.url.host, '') || previousPage;
 	});
 
 	let product: any = undefined;
