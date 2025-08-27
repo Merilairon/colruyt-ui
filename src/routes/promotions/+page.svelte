@@ -30,7 +30,9 @@
 	async function fetchPromotions(page: number) {
 		try {
 			const response = await fetch(
-				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=benefit&sort=${selectedSortOption}`
+				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=
+				
+				&sort=${selectedSortOption}`
 			);
 			const data = await response.json();
 			helper.total = data.total;
@@ -140,18 +142,18 @@
 
 					<div class="promo-info-left">
 						<Badge slot="text" class="ms-3">
-							-{promotion.benefits[0].benefitPercentage
-								? `${promotion.benefits[0].benefitPercentage}%`
-								: `€${promotion.benefits[0].benefitAmount / 100}`}
+							-{promotion.benefits[0]?.benefitPercentage
+								? `${promotion.benefits[0]?.benefitPercentage}%`
+								: `€${promotion.benefits[0]?.benefitAmount / 100}`}
 						</Badge>
 					</div>
 					<div class="promo-info-right">
 						<span class="text font-bold text-red-700 dark:text-white"
-							>From {promotion.benefits[0]?.minLimit} {promotion.benefits[0]?.limitUnit}</span
+							>From {promotion.benefits[0]?.minLimit} {promotion?.benefits[0]?.limitUnit}</span
 						>
 					</div>
 
-					{#if promotion.promotionTexts && promotion.promotionTexts[0]?.text
+					{#if promotion?.promotionTexts && promotion?.promotionTexts[0]?.text
 							?.toLowerCase()
 							.includes('top promo')}
 						<div class="top-promo font-bold">
