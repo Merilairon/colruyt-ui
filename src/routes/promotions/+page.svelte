@@ -74,6 +74,19 @@
 	}
 </script>
 
+<div class="mb-5 flex w-80 justify-center">
+	<Label class="mr-2 w-60 ">
+		Sort: <Select
+			on:change={sortPromotions}
+			class="mt-2"
+			items={sortOptions}
+			bind:value={selectedSortOption}
+		/>
+	</Label>
+	<div class="resetBtn">
+		<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
+	</div>
+</div>
 {#if $promotions.length === 0}
 	<div class="loading-state">
 		<div class="text-center">
@@ -81,19 +94,6 @@
 		</div>
 	</div>
 {:else}
-	<div class="mb-5 flex w-80 justify-center">
-		<Label class="mr-2 w-60 ">
-			Sort: <Select
-				on:change={sortPromotions}
-				class="mt-2"
-				items={sortOptions}
-				bind:value={selectedSortOption}
-			/>
-		</Label>
-		<div class="resetBtn">
-			<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
-		</div>
-	</div>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
 			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
