@@ -1,14 +1,19 @@
 <script lang="ts">
 	import '../app.css';
 	import { Button, DarkMode, Navbar, NavBrand, NavHamburger, NavLi, NavUl } from 'flowbite-svelte';
-	import { page } from '$app/state';
+	import { page, navigating } from '$app/state';
 	import { CaretUpSolid } from 'flowbite-svelte-icons';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
+	import type { Page } from '@sveltejs/kit';
+	let activeUrl: any = page.url.pathname;
 
-	$: activeUrl = page.url.pathname;
 	let hideSpeedDial = true;
 
+	export const load = (page: Page) => {
+		activeUrl = page.url.pathname;
+		console.log(page.url.pathname);
+	};
 	onMount(() => {
 		if (browser) {
 			window.addEventListener('scroll', () => {
