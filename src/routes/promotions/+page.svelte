@@ -30,7 +30,9 @@
 	async function fetchPromotions(page: number) {
 		try {
 			const response = await fetch(
-				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=benefit&sort=${selectedSortOption}`
+				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=
+				
+				&sort=${selectedSortOption}`
 			);
 			const data = await response.json();
 			helper.total = data.total;
@@ -72,6 +74,19 @@
 	}
 </script>
 
+<div class="mb-5 flex w-80 justify-center">
+	<Label class="mr-2 w-60 ">
+		Sort: <Select
+			on:change={sortPromotions}
+			class="mt-2"
+			items={sortOptions}
+			bind:value={selectedSortOption}
+		/>
+	</Label>
+	<div class="resetBtn">
+		<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
+	</div>
+</div>
 {#if $promotions.length === 0}
 	<div class="loading-state">
 		<div class="text-center">
@@ -79,19 +94,6 @@
 		</div>
 	</div>
 {:else}
-	<div class="mb-5 flex w-80 justify-center">
-		<Label class="mr-2 w-60 ">
-			Sort: <Select
-				on:change={sortPromotions}
-				class="mt-2"
-				items={sortOptions}
-				bind:value={selectedSortOption}
-			/>
-		</Label>
-		<div class="resetBtn">
-			<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
-		</div>
-	</div>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
 			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
@@ -140,18 +142,18 @@
 
 					<div class="promo-info-left">
 						<Badge slot="text" class="ms-3">
-							-{promotion.benefits[0].benefitPercentage
-								? `${promotion.benefits[0].benefitPercentage}%`
-								: `€${promotion.benefits[0].benefitAmount / 100}`}
+							-{promotion.benefits[0]?.benefitPercentage
+								? `${promotion.benefits[0]?.benefitPercentage}%`
+								: `€${promotion.benefits[0]?.benefitAmount / 100}`}
 						</Badge>
 					</div>
 					<div class="promo-info-right">
 						<span class="text font-bold text-red-700 dark:text-white"
-							>From {promotion.benefits[0]?.minLimit} {promotion.benefits[0]?.limitUnit}</span
+							>From {promotion.benefits[0]?.minLimit} {promotion?.benefits[0]?.limitUnit}</span
 						>
 					</div>
 
-					{#if promotion.promotionTexts && promotion.promotionTexts[0]?.text
+					{#if promotion?.promotionTexts && promotion?.promotionTexts[0]?.text
 							?.toLowerCase()
 							.includes('top promo')}
 						<div class="top-promo font-bold">

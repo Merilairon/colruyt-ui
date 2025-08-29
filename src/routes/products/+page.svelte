@@ -112,14 +112,23 @@
 	}
 </script>
 
-{#if $products.length === 0}
+<Search class="mb-4" value={savedSearchValue} on:input={searchProductsDebounced}></Search>
+
+{#if $products.length === 0 && !savedSearchValue}
 	<div class="loading-state">
 		<div class="text-center">
 			<Spinner />
 		</div>
 	</div>
+{:else if $products.length === 0 && savedSearchValue}
+	<div class="loading-state">
+		<div class="text-center">
+			
+			<span class="font-semibold text-gray-900 dark:text-white">No results found</span>
+			
+		</div>
+	</div>
 {:else}
-	<Search class="mb-4" value={savedSearchValue} on:input={searchProductsDebounced}></Search>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
 			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
@@ -130,7 +139,6 @@
 			Entries
 		</div>
 	</div>
-
 	<div
 		class="mb-4 grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 	>
