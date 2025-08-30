@@ -61,7 +61,7 @@
 </div>
 
 {#if !hideSpeedDial}
-	<Button onclick={scrollToTop} pill={true} class="fixed end-6 bottom-6 !p-3">
+	<Button color="red" onclick={scrollToTop} pill={true} class="fixed end-6 bottom-6 !p-3">
 		<CaretUpSolid class="h-8 w-8" />
 	</Button>
 {/if}
