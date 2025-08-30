@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Pagination, PaginationItem, Search, Spinner } from 'flowbite-svelte';
+	import { Pagination, PaginationItem, PaginationNav, Search, Spinner } from 'flowbite-svelte';
 	import { debounce } from '$lib/debounce';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import products from '../../stores/products';
@@ -8,11 +8,12 @@
 	import ProductCard from '$lib/components/ProductCard.svelte';
 	import { replaceState } from '$app/navigation';
 
+	// svelte-ignore non_reactive_update
 	let pageSize = 60;
-	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
+	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
 	let includeUnavailable = false;
-	let filteredProducts = $products;
-	let savedSearchValue = '';
+	let filteredProducts = $state($products);
+	let savedSearchValue = $state('');
 
 	onMount(async () => {
 		if (page.url.searchParams.get('includeUnavailable')) {
@@ -78,41 +79,22 @@
 			});
 	}
 
-	function previous() {
-		if (helper.page > 1) {
-			helper.page--;
-			helper.start = helper.start - pageSize;
-			helper.end = helper.end - pageSize;
+	const handlePageChange = (pageNr: number) => {
+		helper.page = pageNr;
 
-			page.url.searchParams.set('searchValue', savedSearchValue);
-			page.url.searchParams.set('page', helper.page.toString());
-			page.url.searchParams.set('pageSize', pageSize.toString());
+		helper.start = pageSize * (helper.page - 1) + 1;
+		helper.end = helper.start + pageSize - 1;
 
-			replaceState(page.url, page.state);
-			fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
-		}
-	}
+		page.url.searchParams.set('searchValue', savedSearchValue);
+		page.url.searchParams.set('page', helper.page.toString());
+		page.url.searchParams.set('pageSize', pageSize.toString());
 
-	function next() {
-		if (helper.end < helper.total) {
-			helper.page++;
-			helper.start = helper.start + pageSize;
-			helper.end = helper.end + pageSize;
-			if (helper.end > helper.total) {
-				helper.end = helper.total;
-			}
-
-			page.url.searchParams.set('searchValue', savedSearchValue);
-			page.url.searchParams.set('page', helper.page.toString());
-			page.url.searchParams.set('pageSize', pageSize.toString());
-
-			replaceState(page.url, page.state);
-			fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
-		}
-	}
+		replaceState(page.url, page.state);
+		fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
+	};
 </script>
 
-<Search class="mb-4" value={savedSearchValue} on:input={searchProductsDebounced}></Search>
+<Search class="mb-4" value={savedSearchValue} oninput={searchProductsDebounced}></Search>
 
 {#if $products.length === 0 && !savedSearchValue}
 	<div class="loading-state">
@@ -123,9 +105,7 @@
 {:else if $products.length === 0 && savedSearchValue}
 	<div class="loading-state">
 		<div class="text-center">
-			
 			<span class="font-semibold text-gray-900 dark:text-white">No results found</span>
-			
 		</div>
 	</div>
 {:else}
@@ -156,14 +136,22 @@
 			Entries
 		</div>
 
-		<Pagination pages={[]} on:next={next} on:previous={previous} table large>
-			<PaginationItem slot="prev">
+		<PaginationNav
+			currentPage={helper.page}
+			onPageChange={handlePageChange}
+			totalPages={Math.ceil(helper.total / pageSize)}
+			table
+			size="large"
+		>
+			{#snippet prevContent()}
+				<span class="sr-only">Previous</span>
 				<ArrowLeftOutline class="h-5 w-5" />
-			</PaginationItem>
-			<PaginationItem slot="next">
+			{/snippet}
+			{#snippet nextContent()}
+				<span class="sr-only">Next</span>
 				<ArrowRightOutline class="h-5 w-5" />
-			</PaginationItem>
-		</Pagination>
+			{/snippet}
+		</PaginationNav>
 	</div>
 {/if}
 

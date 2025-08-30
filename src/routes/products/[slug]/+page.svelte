@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Button, Chart, Spinner } from 'flowbite-svelte';
+	import { Button, Spinner } from 'flowbite-svelte';
+	import { Chart } from '@flowbite-svelte-plugins/chart';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -12,8 +13,8 @@
 			from?.url.href.replace(from?.url.protocol + '//' + from?.url.host, '') || previousPage;
 	});
 
-	let product: any = undefined;
-	let options: any = {
+	let product: any = $state(undefined);
+	let options: any = $state({
 		theme: {
 			mode: 'dark'
 		},
@@ -67,8 +68,11 @@
 		],
 		xaxis: {
 			type: 'datetime'
+		},
+		yaxis: {
+			min: 0
 		}
-	};
+	});
 
 	onMount(async () => {
 		try {
@@ -110,13 +114,13 @@
 		}
 	});
 
-	function goBack() {
+	const goBack = () => {
 		goto(previousPage);
-	}
+	};
 </script>
 
 <div>
-	<Button on:click={goBack}>
+	<Button color="red" aria-label="Go back" class="mb-4" onclick={goBack}>
 		<ArrowLeftOutline class="ms-2 h-5 w-5" />
 		Back
 	</Button>

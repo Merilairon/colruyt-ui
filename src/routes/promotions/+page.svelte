@@ -6,6 +6,7 @@
 		Label,
 		Pagination,
 		PaginationItem,
+		PaginationNav,
 		Select,
 		Spinner
 	} from 'flowbite-svelte';
@@ -14,9 +15,9 @@
 	import { onMount } from 'svelte';
 
 	let pageSize = 60;
-	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
-	let filteredPromotions = $promotions;
-	let selectedSortOption = 'desc';
+	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
+	let filteredPromotions = $state($promotions);
+	let selectedSortOption = $state('desc');
 	let sortOptions = [
 		{ value: 'asc', name: 'Ascending' },
 		{ value: 'desc', name: 'Descending' }
@@ -43,48 +44,36 @@
 		}
 	}
 
-	function previous() {
-		if (helper.page > 1) {
-			helper.page--;
-			helper.start -= pageSize;
-			helper.end -= pageSize;
-			fetchPromotions(helper.page);
-		}
-	}
+	const handlePageChange = (pageNr: number) => {
+		helper.page = pageNr;
 
-	function next() {
-		if (helper.end < helper.total) {
-			helper.page++;
-			helper.start += pageSize;
-			helper.end += pageSize;
-			if (helper.end > helper.total) {
-				helper.end = helper.total;
-			}
-			fetchPromotions(helper.page);
-		}
-	}
+		helper.start = pageSize * (helper.page - 1) + 1;
+		helper.end = helper.start + pageSize - 1;
 
-	async function sortPromotions() {
+		fetchPromotions(helper.page);
+	};
+
+	const sortPromotions = async () => {
 		await fetchPromotions(helper.page);
-	}
+	};
 
-	async function resetSort() {
+	const resetSort = async () => {
 		selectedSortOption = 'desc';
 		await sortPromotions();
-	}
+	};
 </script>
 
 <div class="mb-5 flex w-80 justify-center">
 	<Label class="mr-2 w-60 ">
 		Sort: <Select
-			on:change={sortPromotions}
+			onchange={sortPromotions}
 			class="mt-2"
 			items={sortOptions}
 			bind:value={selectedSortOption}
 		/>
 	</Label>
 	<div class="resetBtn">
-		<Button on:click={resetSort} style="height:42px; margin-top:28px" class="w-20">Reset</Button>
+		<Button class="mt-7 w-20" onclick={resetSort}>Reset</Button>
 	</div>
 </div>
 {#if $promotions.length === 0}
@@ -110,11 +99,10 @@
 	>
 		{#each filteredPromotions as promotion, index}
 			<Card
-				padding="sm"
 				class={promotion.promotionTexts &&
 				promotion.promotionTexts[0]?.text?.toLowerCase().includes('top promo')
-					? 'relative shadow-orange-500'
-					: 'relative'}
+					? 'relative p-8 shadow-orange-500'
+					: 'relative p-8'}
 			>
 				<a href="/promotions/{promotion.promotionId}" class="mb-4">
 					<div class="card-image">
@@ -141,11 +129,13 @@
 					</div>
 
 					<div class="promo-info-left">
-						<Badge slot="text" class="ms-3">
-							-{promotion.benefits[0]?.benefitPercentage
-								? `${promotion.benefits[0]?.benefitPercentage}%`
-								: `€${promotion.benefits[0]?.benefitAmount / 100}`}
-						</Badge>
+						{#snippet text()}
+							<Badge class="ms-3">
+								-{promotion.benefits[0]?.benefitPercentage
+									? `${promotion.benefits[0]?.benefitPercentage}%`
+									: `€${promotion.benefits[0]?.benefitAmount / 100}`}
+							</Badge>
+						{/snippet}
 					</div>
 					<div class="promo-info-right">
 						<span class="text font-bold text-red-700 dark:text-white"
@@ -174,14 +164,22 @@
 			Entries
 		</div>
 
-		<Pagination pages={[]} on:next={next} on:previous={previous} table large>
-			<PaginationItem slot="prev">
+		<PaginationNav
+			currentPage={helper.page}
+			onPageChange={handlePageChange}
+			totalPages={Math.ceil(helper.total / pageSize)}
+			table
+			size="large"
+		>
+			{#snippet prevContent()}
+				<span class="sr-only">Previous</span>
 				<ArrowLeftOutline class="h-5 w-5" />
-			</PaginationItem>
-			<PaginationItem slot="next">
+			{/snippet}
+			{#snippet nextContent()}
+				<span class="sr-only">Next</span>
 				<ArrowRightOutline class="h-5 w-5" />
-			</PaginationItem>
-		</Pagination>
+			{/snippet}
+		</PaginationNav>
 	</div>
 {/if}
 

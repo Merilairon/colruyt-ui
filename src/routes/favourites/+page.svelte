@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Pagination, PaginationItem, Spinner } from 'flowbite-svelte';
+	import { Pagination, PaginationItem, PaginationNav, Spinner } from 'flowbite-svelte';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
 
 	let pageSize = 60;
-	let helper = { start: 1, end: pageSize, page: 1, total: 100 };
-	let filteredProducts: any[] = [];
+	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
+	let filteredProducts: any[] = $state([]);
 
 	onMount(async () => {
 		await fetchProducts(helper.page);
@@ -35,26 +35,14 @@
 			});
 	}
 
-	function previous() {
-		if (helper.page > 1) {
-			helper.page--;
-			helper.start = helper.start - pageSize;
-			helper.end = helper.end - pageSize;
-			fetchProducts(helper.page);
-		}
-	}
+	const handlePageChange = (pageNr: number) => {
+		helper.page = pageNr;
 
-	function next() {
-		if (helper.end < helper.total) {
-			helper.page++;
-			helper.start = helper.start + pageSize;
-			helper.end = helper.end + pageSize;
-			if (helper.end > helper.total) {
-				helper.end = helper.total;
-			}
-			fetchProducts(helper.page);
-		}
-	}
+		helper.start = pageSize * (helper.page - 1) + 1;
+		helper.end = helper.start + pageSize - 1;
+
+		fetchProducts(helper.page);
+	};
 </script>
 
 {#if $favourites.length === 0}
@@ -94,14 +82,22 @@
 			Entries
 		</div>
 
-		<Pagination pages={[]} on:next={next} on:previous={previous} table large>
-			<PaginationItem slot="prev">
+		<PaginationNav
+			currentPage={helper.page}
+			onPageChange={handlePageChange}
+			totalPages={Math.ceil(helper.total / pageSize)}
+			table
+			size="large"
+		>
+			{#snippet prevContent()}
+				<span class="sr-only">Previous</span>
 				<ArrowLeftOutline class="h-5 w-5" />
-			</PaginationItem>
-			<PaginationItem slot="next">
+			{/snippet}
+			{#snippet nextContent()}
+				<span class="sr-only">Next</span>
 				<ArrowRightOutline class="h-5 w-5" />
-			</PaginationItem>
-		</Pagination>
+			{/snippet}
+		</PaginationNav>
 	</div>
 {/if}
 

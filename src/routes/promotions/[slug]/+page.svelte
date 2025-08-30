@@ -13,7 +13,7 @@
 			from?.url.href.replace(from?.url.protocol + '//' + from?.url.host, '') || previousPage;
 	});
 
-	let promotion: any = undefined;
+	let promotion: any = $state(undefined);
 
 	onMount(async () => {
 		try {
@@ -26,15 +26,15 @@
 		}
 	});
 
-	function goBack() {
+	const goBack = () => {
 		goto(previousPage);
-	}
+	};
 
 	//TODO: Add benefit infomation to the promotion
 </script>
 
 <div>
-	<Button aria-label="Go back" class="mb-4" on:click={goBack}>
+	<Button color="red" aria-label="Go back" class="mb-4" onclick={goBack}>
 		<ArrowLeftOutline class="ms-2 h-5 w-5" />
 		Back
 	</Button>
@@ -58,7 +58,7 @@
 				>
 			</p>
 			{#each promotion?.benefits as benefit (benefit.id)}
-				<Badge color="red" class="mr-4 mt-4 min-h-20 min-w-48">
+				<Badge color="red" class="mt-4 mr-4 min-h-20 min-w-48">
 					<span class="float-left m-2 p-2 text-left">
 						- {benefit.benefitAmount
 							? '€' + benefit.benefitAmount / 100

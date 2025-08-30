@@ -3,8 +3,12 @@
 	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 
-	export let includeFavouriteButton = false;
-	export let product: any;
+	interface Props {
+		includeFavouriteButton?: boolean;
+		product: any;
+	}
+
+	let { includeFavouriteButton = false, product }: Props = $props();
 
 	function handleFavourite(productId: string) {
 		favourites.update((favs) => {
@@ -16,7 +20,7 @@
 	}
 </script>
 
-<Card data-index={product.productId} padding="sm">
+<Card data-index={product.productId} class="p-8">
 	<div class="card">
 		<a href="/products/{product.productId}">
 			<div class="card-image">
@@ -30,7 +34,7 @@
 				</h5>
 			</div>
 			<div class="flex items-center justify-between">
-				<Badge class="ms-3" slot="text"
+				<Badge rounded color="red" class="ms-3"
 					>{product?.pricechange?.priceChange > 0 ? '+' : ''}{Math.floor(
 						product?.pricechange?.priceChangePercentage * 10000 || 0
 					) / 100}%
@@ -62,8 +66,9 @@
 			<div class="favouriteBtn">
 				<Button
 					class="h-8 w-8 !p-2"
-					on:click={() => handleFavourite(product.productId)}
-					pill={true}
+					onclick={() => handleFavourite(product.productId)}
+					pill
+					color="red"
 					style="margin-left: auto; order: 0;"
 				>
 					{#if $favourites.includes(product.productId)}
