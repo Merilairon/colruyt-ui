@@ -71,12 +71,16 @@
 	</div>
 </div>
 <Footer footerType="sitemap">
-	<div class="bg-gray-100 px-4 py-6 md:flex md:items-center md:justify-between dark:bg-gray-700">
+	<div
+		class="bg-gray-100 px-4 py-6 text-gray-700 md:flex md:items-center md:justify-between dark:bg-gray-700 dark:text-white"
+	>
 		<FooterCopyright
 			class="text-sm text-gray-900 sm:text-center dark:text-gray-200"
 			href="/"
 			by="Merilairon™"
 		/>
+		The Colruyt logo and all associated logos and designs are trademarks or registered trademarks of
+		Colruyt Group. All other trademarks are the property of their respective owners.
 		<div class="mt-4 flex space-x-6 sm:justify-center md:mt-0 rtl:space-x-reverse">
 			<FooterIcon href="https://github.com/Merilairon/colruyt-ui">
 				<GithubSolid
