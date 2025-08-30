@@ -1,10 +1,21 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { Button, DarkMode, Navbar, NavBrand, NavHamburger, NavLi, NavUl } from 'flowbite-svelte';
+	import {
+		Button,
+		DarkMode,
+		Navbar,
+		NavBrand,
+		NavHamburger,
+		NavLi,
+		NavUl,
+		Footer,
+		FooterCopyright,
+		FooterIcon
+	} from 'flowbite-svelte';
 
 	import { page } from '$app/state';
-	import { CaretUpSolid } from 'flowbite-svelte-icons';
+	import { CaretUpSolid, GithubSolid } from 'flowbite-svelte-icons';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
@@ -59,6 +70,22 @@
 		{@render children?.()}
 	</div>
 </div>
+<Footer footerType="sitemap">
+	<div class="bg-gray-100 px-4 py-6 md:flex md:items-center md:justify-between dark:bg-gray-700">
+		<FooterCopyright
+			class="text-sm text-gray-900 sm:text-center dark:text-gray-200"
+			href="/"
+			by="Merilairon™"
+		/>
+		<div class="mt-4 flex space-x-6 sm:justify-center md:mt-0 rtl:space-x-reverse">
+			<FooterIcon href="https://github.com/Merilairon/colruyt-ui">
+				<GithubSolid
+					class="h-5 w-5 text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white"
+				/>
+			</FooterIcon>
+		</div>
+	</div>
+</Footer>
 
 {#if !hideSpeedDial}
 	<Button color="red" onclick={scrollToTop} pill={true} class="fixed end-6 bottom-6 !p-3">
