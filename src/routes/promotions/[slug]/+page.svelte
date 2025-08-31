@@ -29,8 +29,6 @@
 	const goBack = () => {
 		goto(previousPage);
 	};
-
-	//TODO: Add benefit infomation to the promotion
 </script>
 
 <div>

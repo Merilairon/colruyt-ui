@@ -98,12 +98,7 @@
 		class="grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 	>
 		{#each filteredPromotions as promotion, index}
-			<Card
-				class={promotion.promotionTexts &&
-				promotion.promotionTexts[0]?.text?.toLowerCase().includes('top promo')
-					? 'relative p-8 shadow-orange-500'
-					: 'relative p-8'}
-			>
+			<Card class={promotion.topPromo ? 'relative p-8 shadow-orange-500' : 'relative p-8'}>
 				<a href="/promotions/{promotion.promotionId}" class="mb-4">
 					<div class="card-image">
 						<img
@@ -143,9 +138,7 @@
 						>
 					</div>
 
-					{#if promotion?.promotionTexts && promotion?.promotionTexts[0]?.text
-							?.toLowerCase()
-							.includes('top promo')}
+					{#if promotion.topPromo}
 						<div class="top-promo font-bold">
 							<span class="text-orange-500">TOP</span> Promo
 						</div>
