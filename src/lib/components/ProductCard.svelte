@@ -8,7 +8,14 @@
 		product: any;
 	}
 
-	let { includeFavouriteButton = false, product }: Props = $props();
+	const { includeFavouriteButton = false, product }: Props = $props();
+
+	const priceChangeP1 = $derived(
+		product.pricechanges?.find((pc: any) => pc.priceChangeType === 'P1')
+	);
+	const priceChangeP2 = $derived(
+		product.pricechanges?.find((pc: any) => pc.priceChangeType === 'P2')
+	);
 
 	function handleFavourite(productId: string) {
 		favourites.update((favs) => {
@@ -35,8 +42,8 @@
 			</div>
 			<div class="flex items-center justify-between">
 				<Badge rounded color="red" class="ms-3"
-					>{product?.pricechange?.priceChange > 0 ? '+' : ''}{Math.floor(
-						product?.pricechange?.priceChangePercentage * 10000 || 0
+					>{priceChangeP1?.priceChange > 0 ? '+' : ''}{Math.floor(
+						priceChangeP1?.priceChangePercentage * 10000 || 0
 					) / 100}%
 				</Badge>
 				<div class="text-right">
@@ -47,12 +54,11 @@
 			</div>
 			{#if product.prices[0]?.quantityPrice}
 				<div class="flex items-center justify-between">
-					<!--
-					<Badge class="ms-3" slot="text"
-						>{product?.pricechange?.priceChange > 0 ? '+' : ''}{Math.floor(
-							product?.pricechange?.priceChangePercentage * 10000 || 0
+					<Badge rounded color="red" class="ms-3"
+						>{priceChangeP2?.priceChange > 0 ? '+' : ''}{Math.floor(
+							priceChangeP2?.priceChangePercentage * 10000 || 0
 						) / 100}%
-					</Badge>-->
+					</Badge>
 					<div class="ms-3"></div>
 					<div class="text-right">
 						<span class="text font-bold text-orange-500 dark:text-orange-500"
