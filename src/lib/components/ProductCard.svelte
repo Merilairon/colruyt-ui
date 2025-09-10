@@ -3,19 +3,10 @@
 	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 
-	interface Props {
-		includeFavouriteButton?: boolean;
-		product: any;
-	}
+	let { includeFavouriteButton = false, product } = $props();
 
-	const { includeFavouriteButton = false, product }: Props = $props();
-
-	const priceChangeP1 = $derived(
-		product.pricechanges?.find((pc: any) => pc.priceChangeType === 'P1')
-	);
-	const priceChangeP2 = $derived(
-		product.pricechanges?.find((pc: any) => pc.priceChangeType === 'P2')
-	);
+	const priceChangeP1 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P1');
+	const priceChangeP2 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P2');
 
 	function handleFavourite(productId: string) {
 		favourites.update((favs) => {
@@ -41,7 +32,7 @@
 				</h5>
 			</div>
 			<div class="flex items-center justify-between">
-				<Badge rounded color="red" class="ms-3"
+				<Badge color="red" class="ms-3" rounded
 					>{priceChangeP1?.priceChange > 0 ? '+' : ''}{Math.floor(
 						priceChangeP1?.priceChangePercentage * 10000 || 0
 					) / 100}%
@@ -54,12 +45,11 @@
 			</div>
 			{#if product.prices[0]?.quantityPrice}
 				<div class="flex items-center justify-between">
-					<Badge rounded color="red" class="ms-3"
+					<Badge color="red" class="ms-3" rounded
 						>{priceChangeP2?.priceChange > 0 ? '+' : ''}{Math.floor(
 							priceChangeP2?.priceChangePercentage * 10000 || 0
 						) / 100}%
 					</Badge>
-					<div class="ms-3"></div>
 					<div class="text-right">
 						<span class="text font-bold text-orange-500 dark:text-orange-500"
 							>€{product.prices[0].quantityPrice} from {product.prices[0].quantityPriceQuantity}

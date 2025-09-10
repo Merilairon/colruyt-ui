@@ -12,7 +12,7 @@
 	let pageSize = 60;
 	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
 	let includeUnavailable = false;
-	let filteredProducts = $state($products);
+	let filteredProducts = $derived($products);
 	let savedSearchValue = $state('');
 
 	onMount(async () => {
@@ -71,7 +71,6 @@
 					helper.end = data.total;
 				}
 				products.set(data.products);
-				filteredProducts = $products;
 			})
 			.catch((error) => {
 				console.log(error);
