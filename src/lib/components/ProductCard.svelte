@@ -5,8 +5,8 @@
 
 	let { includeFavouriteButton = false, product } = $props();
 
-	const priceChangeP1 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P1');
-	const priceChangeP2 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P2');
+	let priceChangeP1 = $state(0);
+	let priceChangeP2 = $state(0);
 
 	function handleFavourite(productId: string) {
 		favourites.update((favs) => {
@@ -16,6 +16,11 @@
 			return [...favs, productId];
 		});
 	}
+
+	$effect(() => {
+		priceChangeP1 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P1');
+		priceChangeP2 = product.priceChanges?.find((pc: any) => pc.priceChangeType === 'P2');
+	});
 </script>
 
 <Card data-index={product.productId} class="p-8">
