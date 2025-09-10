@@ -5,8 +5,14 @@
 
 	let { includeFavouriteButton = false, product } = $props();
 
-	let priceChangeP1 = $state(0);
-	let priceChangeP2 = $state(0);
+	let priceChangeP1 = $state({
+		priceChange: 0,
+		priceChangePercentage: 0
+	});
+	let priceChangeP2 = $state({
+		priceChange: 0,
+		priceChangePercentage: 0
+	});
 
 	function handleFavourite(productId: string) {
 		favourites.update((favs) => {
