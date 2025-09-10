@@ -77,7 +77,7 @@
 	</div>
 </div>
 {#if $promotions.length === 0}
-	<div class="loading-state">
+	<div class="loading-state animate-pulse">
 		<div class="text-center">
 			<Spinner />
 		</div>

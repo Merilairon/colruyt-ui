@@ -46,7 +46,7 @@
 
 <div class="relative px-8">
 	<Navbar
-		class="fixed start-0 top-0 z-20 w-full border-b bg-white px-2 py-2.5 sm:px-4 dark:bg-slate-600"
+		class="fixed start-0 top-0 z-20 w-full bg-white px-2 py-2.5 shadow-lg sm:px-4 dark:bg-slate-600"
 		color="form"
 	>
 		<NavBrand href="/">

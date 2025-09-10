@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Pagination, PaginationItem, PaginationNav, Search, Spinner } from 'flowbite-svelte';
+	import { PaginationNav, Search, Spinner } from 'flowbite-svelte';
 	import { debounce } from '$lib/debounce';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import products from '../../stores/products';
@@ -12,7 +12,6 @@
 	let pageSize = 60;
 	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
 	let includeUnavailable = false;
-	let filteredProducts = $derived($products);
 	let savedSearchValue = $state('');
 
 	onMount(async () => {
@@ -36,10 +35,6 @@
 	const searchProductsDebounced = debounce(searchProducts, 1000);
 
 	function searchProducts(event: Event) {
-		// 	filteredProducts = $products.filter((product) =>
-		// 		product.name.toLowerCase().includes((event.target as HTMLInputElement).value.toLowerCase())
-		// 	);
-
 		// reset pagination
 		helper.page = 1;
 		helper.start = 1;
@@ -95,16 +90,14 @@
 
 <Search class="mb-4" value={savedSearchValue} oninput={searchProductsDebounced}></Search>
 
-{#if $products.length === 0 && !savedSearchValue}
-	<div class="loading-state">
+{#if $products.length === 0}
+	<div class="loading-state animate-pulse">
 		<div class="text-center">
-			<Spinner />
-		</div>
-	</div>
-{:else if $products.length === 0 && savedSearchValue}
-	<div class="loading-state">
-		<div class="text-center">
-			<span class="font-semibold text-gray-900 dark:text-white">No results found</span>
+			{#if savedSearchValue}
+				<span class="font-semibold text-gray-900 dark:text-white">No results found</span>
+			{:else}
+				<Spinner />
+			{/if}
 		</div>
 	</div>
 {:else}
@@ -121,7 +114,7 @@
 	<div
 		class="mb-4 grid grid-flow-row auto-rows-max gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
 	>
-		{#each filteredProducts as product, index}
+		{#each $products as product, index}
 			<ProductCard {product} includeFavouriteButton={true} />
 		{/each}
 	</div>
