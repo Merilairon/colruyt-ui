@@ -72,7 +72,7 @@
 		{#if includeFavouriteButton}
 			<div class="favouriteBtn">
 				<Button
-					class="h-8 w-8 !p-2"
+					class="h-8 w-8 cursor-pointer !p-2"
 					onclick={() => handleFavourite(product.productId)}
 					pill
 					color="red"

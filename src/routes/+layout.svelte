@@ -62,7 +62,7 @@
 			<NavLi href="/promotions">Promotions</NavLi>
 			<NavLi href="/favourites">Favourites</NavLi>
 		</NavUl>
-		<DarkMode />
+		<DarkMode class="cursor-pointer" />
 	</Navbar>
 </div>
 <div style="margin-top: 5em">
@@ -92,7 +92,12 @@
 </Footer>
 
 {#if !hideSpeedDial}
-	<Button color="red" onclick={scrollToTop} pill={true} class="fixed end-6 bottom-6 !p-3">
+	<Button
+		color="red"
+		onclick={scrollToTop}
+		pill={true}
+		class="fixed end-6 bottom-6 cursor-pointer !p-3"
+	>
 		<CaretUpSolid class="h-8 w-8" />
 	</Button>
 {/if}

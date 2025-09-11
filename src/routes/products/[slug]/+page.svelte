@@ -120,7 +120,7 @@
 </script>
 
 <div>
-	<Button color="red" aria-label="Go back" class="mb-4" onclick={goBack}>
+	<Button color="red" aria-label="Go back" class="mb-4 cursor-pointer" onclick={goBack}>
 		<ArrowLeftOutline class="ms-2 h-5 w-5" />
 		Back
 	</Button>

@@ -73,7 +73,7 @@
 		/>
 	</Label>
 	<div class="resetBtn">
-		<Button class="mt-7 w-20" onclick={resetSort}>Reset</Button>
+		<Button class="mt-7 w-20 cursor-pointer" onclick={resetSort}>Reset</Button>
 	</div>
 </div>
 {#if $promotions.length === 0}
