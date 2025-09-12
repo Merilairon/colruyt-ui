@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { PaginationNav, Search, Spinner } from 'flowbite-svelte';
+	import { PaginationNav, Search, Spinner, Select, Label } from 'flowbite-svelte';
 	import { debounce } from '$lib/debounce';
 	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
 	import products from '../../stores/products';
@@ -13,6 +13,7 @@
 	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
 	let includeUnavailable = false;
 	let savedSearchValue = $state('');
+	let selectedSortValue = $state('desc');
 
 	onMount(async () => {
 		if (page.url.searchParams.get('includeUnavailable')) {
@@ -29,7 +30,7 @@
 		if (page.url.searchParams.get('searchValue')) {
 			savedSearchValue = page.url.searchParams.get('searchValue') as string;
 		}
-		await fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
+		await fetchProducts(helper.page, !includeUnavailable, savedSearchValue, selectedSortValue);
 	});
 
 	const searchProductsDebounced = debounce(searchProducts, 1000);
@@ -51,13 +52,19 @@
 		fetchProducts(
 			helper.page,
 			!includeUnavailable,
-			savedSearchValue ? savedSearchValue : undefined
+			savedSearchValue ? savedSearchValue : undefined,
+			selectedSortValue
 		);
 	}
 
-	function fetchProducts(page: number, isAvailable: boolean, searchValue: string | undefined) {
+	function fetchProducts(
+		page: number,
+		isAvailable: boolean,
+		searchValue: string | undefined,
+		sortValue: string | undefined
+	) {
 		fetch(
-			`${'https://colruyt.merilairon.com/api'}/products?isAvailable=${isAvailable}&page=${page}&size=${pageSize}${searchValue ? `&search=${searchValue}` : ''}`
+			`${'https://colruyt.merilairon.com/api'}/products?isAvailable=${isAvailable}&page=${page}&size=${pageSize}${searchValue ? `&search=${searchValue}` : ''}${sortValue ? `&sort=${sortValue}` : ''}`
 		)
 			.then((response) => response.json())
 			.then((data) => {
@@ -73,6 +80,10 @@
 			});
 	}
 
+	const handleSortChange = () => {
+		fetchProducts(helper.page, !includeUnavailable, savedSearchValue, selectedSortValue);
+	};
+
 	const handlePageChange = (pageNr: number) => {
 		helper.page = pageNr;
 
@@ -84,11 +95,24 @@
 		page.url.searchParams.set('pageSize', pageSize.toString());
 
 		replaceState(page.url, page.state);
-		fetchProducts(helper.page, !includeUnavailable, savedSearchValue);
+		fetchProducts(helper.page, !includeUnavailable, savedSearchValue, selectedSortValue);
 	};
 </script>
 
-<Search class="mb-4" value={savedSearchValue} oninput={searchProductsDebounced}></Search>
+<div class="grid grid-cols-4 gap-4">
+	<Search class="col-span-3 mb-4" value={savedSearchValue} oninput={searchProductsDebounced}
+	></Search>
+
+	<Select
+		class="mb-4"
+		items={[
+			{ value: 'desc', name: 'Descending' },
+			{ value: 'asc', name: 'Ascending' }
+		]}
+		bind:value={selectedSortValue}
+		onchange={handleSortChange}
+	></Select>
+</div>
 
 {#if $products.length === 0}
 	<div class="loading-state animate-pulse">
