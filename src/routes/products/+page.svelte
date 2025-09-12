@@ -13,7 +13,7 @@
 	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
 	let includeUnavailable = false;
 	let savedSearchValue = $state('');
-	let selectedSortValue = $state('desc');
+	let selectedSortValue = $state('asc');
 
 	onMount(async () => {
 		if (page.url.searchParams.get('includeUnavailable')) {
