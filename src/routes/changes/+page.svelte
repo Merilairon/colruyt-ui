@@ -1,17 +1,26 @@
 <script lang="ts">
 	import { AccordionItem, Accordion, Spinner, Button } from 'flowbite-svelte';
-	import { PlusOutline } from 'flowbite-svelte-icons';
+	import { PlusOutline, AdjustmentsHorizontalOutline } from 'flowbite-svelte-icons';
 	import filters from '../../stores/filters';
 	import FilterPopup from '$lib/components/FilterPopup.svelte';
 	import ProductsOverview from '$lib/components/ProductsOverview.svelte';
+	import FilterManagerPopup from '$lib/components/FilterManagerPopup.svelte';
 
 	let formModal = $state(false);
+	let managerModal = $state(false);
 
 	const addFilter = () => (formModal = true);
+	const manageFilters = () => (managerModal = true);
 
 	$effect(() => {});
 </script>
 
+<div class="flex flex-col items-end justify-center">
+	<Button color="light" aria-label="Go back" class="mb-4 cursor-pointer" onclick={manageFilters}>
+		<AdjustmentsHorizontalOutline class="ms-2 h-5 w-5" />
+		Manage filters
+	</Button>
+</div>
 <Accordion flush class="pb-4">
 	{#each $filters as filter, index}
 		<AccordionItem>
@@ -30,3 +39,4 @@
 </div>
 
 <FilterPopup bind:formModal />
+<FilterManagerPopup bind:managerModal />
