@@ -1,0 +1,31 @@
+{
+	"page": {
+		"products": {
+			"nav": "Producten",
+			"from": " vanaf ",
+			"slug": {
+				"productInfo": "Meer product informatie"
+			}
+		},
+		"changes": {
+			"nav": "Interesante Veranderingen"
+		},
+		"promotions": {
+			"nav": "Promoties"
+		},
+		"favourites": {
+			"nav": "Favorieten"
+		}
+	},
+	"pagination": {
+		"showing": "Tonen ",
+		"to": "tot  ",
+		"of": "van ",
+		"entries": "totale vermeldingen"
+	},
+	"sort": {
+		"ascending": "Oplopend",
+		"descending": "Aflopend"
+	},
+	"footer": "Het Colruyt-logo en alle bijbehorende logo's en ontwerpen zijn handelsmerken of geregistreerde handelsmerken van Colruyt Group. Alle andere handelsmerken zijn het eigendom van hun respectievelijke eigenaren."
+}

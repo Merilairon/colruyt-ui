@@ -5,6 +5,7 @@
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { _, locale, locales } from 'svelte-i18n';
 
 	let previousPage: string = '/products';
 
@@ -157,7 +158,8 @@
 				<A
 					target="_blank"
 					href="https://fic.colruytgroup.com/productinfo/en/algc/{product.technicalArticleNumber}"
-					class="font-medium text-orange-500 hover:underline">More product information</A
+					class="font-medium text-orange-500 hover:underline"
+					>{$_('page.products.slug.productInfo')}</A
 				>
 			</div>
 		</div>

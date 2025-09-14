@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
 	import { replaceState } from '$app/navigation';
+	import { _, locale, locales } from 'svelte-i18n';
 
 	let { fromPercentage = $bindable(), toPercentage = $bindable() } = $props();
 
@@ -58,12 +59,13 @@
 {:else}
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
-			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
-			to
+			{$_('pagination.showing')}
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			{$_('pagination.to')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
-			of
+			{$_('pagination.of')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
-			Entries
+			{$_('pagination.entries')}
 		</div>
 	</div>
 	<div
@@ -74,13 +76,16 @@
 		{/each}
 	</div>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
-		<div class="text-sm text-gray-700 dark:text-gray-400">
-			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
-			to
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
-			of
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
-			Entries
+		<div class="mb-4 flex flex-col items-center justify-center gap-2">
+			<div class="text-sm text-gray-700 dark:text-gray-400">
+				{$_('pagination.showing')}
+				<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+				{$_('pagination.to')}
+				<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
+				{$_('pagination.of')}
+				<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
+				{$_('pagination.entries')}
+			</div>
 		</div>
 
 		<PaginationNav

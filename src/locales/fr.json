@@ -1,0 +1,31 @@
+{
+	"page": {
+		"products": {
+			"nav": "Produits",
+			"from": " à partir de ",
+			"slug": {
+				"productInfo": "Plus d'informations sur le produit"
+			}
+		},
+		"changes": {
+			"nav": "Nouveautés intéressantes"
+		},
+		"promotions": {
+			"nav": "Promotions"
+		},
+		"favourites": {
+			"nav": "Favoris"
+		}
+	},
+	"pagination": {
+		"showing": "Affichage de ",
+		"to": "à ",
+		"of": "sur ",
+		"entries": "entrées"
+	},
+	"sort": {
+		"ascending": "Ascendant",
+		"descending": "Descendant"
+	},
+	"footer": "Les logos Colruyt et tous les logos et designs associés sont des marques de commerce ou des marques déposées de Colruyt Group. Toutes les autres marques de commerce sont la propriété de leurs propriétaires respectifs."
+}

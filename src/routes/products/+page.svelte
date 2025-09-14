@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/components/ProductCard.svelte';
 	import { replaceState } from '$app/navigation';
+	import { _, locale, locales } from 'svelte-i18n';
 
 	// svelte-ignore non_reactive_update
 	let pageSize = 60;
@@ -106,8 +107,8 @@
 	<Select
 		class="mb-4"
 		items={[
-			{ value: 'desc', name: 'Descending' },
-			{ value: 'asc', name: 'Ascending' }
+			{ value: 'desc', name: $_('sort.descending') },
+			{ value: 'asc', name: $_('sort.ascending') }
 		]}
 		bind:value={selectedSortValue}
 		onchange={handleSortChange}
@@ -127,12 +128,13 @@
 {:else}
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
-			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
-			to
+			{$_('pagination.showing')}
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			{$_('pagination.to')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
-			of
+			{$_('pagination.of')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
-			Entries
+			{$_('pagination.entries')}
 		</div>
 	</div>
 	<div
@@ -144,12 +146,13 @@
 	</div>
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
-			Showing <span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
-			to
+			{$_('pagination.showing')}
+			<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			{$_('pagination.to')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
-			of
+			{$_('pagination.of')}
 			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
-			Entries
+			{$_('pagination.entries')}
 		</div>
 
 		<PaginationNav

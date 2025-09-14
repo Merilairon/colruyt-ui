@@ -1,0 +1,31 @@
+{
+	"page": {
+		"products": {
+			"nav": "Products",
+			"from": " from ",
+			"slug": {
+				"productInfo": "More product information"
+			}
+		},
+		"changes": {
+			"nav": "Interesting Changes"
+		},
+		"promotions": {
+			"nav": "Promotions"
+		},
+		"favourites": {
+			"nav": "Favourites"
+		}
+	},
+	"pagination": {
+		"showing": "Showing ",
+		"to": "to ",
+		"of": "of ",
+		"entries": "entries"
+	},
+	"sort": {
+		"ascending": "Ascending",
+		"descending": "Descending"
+	},
+	"footer": "The Colruyt logo and all associated logos and designs are trademarks or registered trademarks of Colruyt Group. All other trademarks are the property of their respective owners."
+}

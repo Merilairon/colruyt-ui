@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { _, locale, locales } from 'svelte-i18n';
 
 	import {
 		Button,
@@ -11,7 +12,8 @@
 		NavUl,
 		Footer,
 		FooterCopyright,
-		FooterIcon
+		FooterIcon,
+		Select
 	} from 'flowbite-svelte';
 
 	import { page } from '$app/state';
@@ -57,12 +59,20 @@
 		</NavBrand>
 		<NavHamburger />
 		<NavUl {activeUrl}>
-			<NavLi href="/products">Products</NavLi>
-			<NavLi href="/changes">Interesting Changes</NavLi>
-			<NavLi href="/promotions">Promotions</NavLi>
-			<NavLi href="/favourites">Favourites</NavLi>
+			<NavLi href="/products">{$_('page.products.nav')}</NavLi>
+			<NavLi href="/changes">{$_('page.changes.nav')}</NavLi>
+			<NavLi href="/promotions">{$_('page.promotions.nav')}</NavLi>
+			<NavLi href="/favourites">{$_('page.favourites.nav')}</NavLi>
 		</NavUl>
-		<DarkMode class="cursor-pointer" />
+		<div class="flex items-center justify-center gap-4">
+			<DarkMode class="cursor-pointer" />
+			<br />
+			<Select bind:value={$locale}>
+				{#each $locales as locale}
+					<option value={locale}>{locale.toUpperCase()}</option>
+				{/each}
+			</Select>
+		</div>
 	</Navbar>
 </div>
 <div style="margin-top: 5em">
@@ -79,8 +89,7 @@
 			href="/"
 			by="Merilairon™"
 		/>
-		The Colruyt logo and all associated logos and designs are trademarks or registered trademarks of
-		Colruyt Group. All other trademarks are the property of their respective owners.
+		{$_('footer')}
 		<div class="mt-4 flex space-x-6 sm:justify-center md:mt-0 rtl:space-x-reverse">
 			<FooterIcon href="https://github.com/Merilairon/colruyt-ui">
 				<GithubSolid

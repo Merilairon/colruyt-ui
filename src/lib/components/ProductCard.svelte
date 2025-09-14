@@ -2,6 +2,7 @@
 	import { Badge, Button, Card } from 'flowbite-svelte';
 	import { AppleFullOutline, FireOutline, HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
+	import { _, locale, locales } from 'svelte-i18n';
 
 	let { includeFavouriteButton = false, product } = $props();
 
@@ -63,7 +64,8 @@
 					</Badge>
 					<div class="text-right">
 						<span class="text font-bold text-orange-500 dark:text-orange-500"
-							>€{product.prices[0].quantityPrice} from {product.prices[0].quantityPriceQuantity}
+							>€{product.prices[0].quantityPrice}{$_('page.products.from')}{product.prices[0]
+								.quantityPriceQuantity}
 						</span>
 					</div>
 				</div>
