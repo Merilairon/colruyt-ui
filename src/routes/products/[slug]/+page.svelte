@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Button, Spinner } from 'flowbite-svelte';
+	import { A, Button, Spinner } from 'flowbite-svelte';
 	import { Chart } from '@flowbite-svelte-plugins/chart';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
 	import { afterNavigate, goto } from '$app/navigation';
@@ -150,6 +150,15 @@
 					</div>
 				{/if}
 				<Chart {options} />
+			</div>
+		</div>
+		<div class="flex flex-col md:flex-row">
+			<div class="md:w-1/2">
+				<A
+					target="_blank"
+					href="https://fic.colruytgroup.com/productinfo/en/algc/{product.technicalArticleNumber}"
+					class="font-medium text-orange-500 hover:underline">More product information</A
+				>
 			</div>
 		</div>
 	</div>

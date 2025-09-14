@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge, Button, Card } from 'flowbite-svelte';
-	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
+	import { AppleFullOutline, FireOutline, HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 
 	let { includeFavouriteButton = false, product } = $props();
@@ -86,10 +86,40 @@
 				</Button>
 			</div>
 		{/if}
+		{#if product.IsNew}
+			<div class="new font-bold">
+				<span class="text-green-500">New</span>
+			</div>
+		{/if}
+		{#if product.IsBio}
+			<div class="bio font-bold">
+				<AppleFullOutline class="h-6 w-6 text-green-500" />
+			</div>
+		{/if}
 	</div>
 </Card>
 
 <style>
+	.new {
+		background-color: darkslategray;
+		border-radius: 5px;
+		color: white;
+		padding: 5px;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	.bio {
+		background-color: darkslategray;
+		border-radius: 5px;
+		color: white;
+		padding: 5px;
+		position: absolute;
+		top: 40px;
+		left: 0;
+	}
+
 	.card {
 		position: relative;
 	}
