@@ -13,12 +13,14 @@
 	// svelte-ignore non_reactive_update
 	let pageSize = 60;
 	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
+	let doneFetching = $state(false);
 
 	onMount(async () => {
 		await fetchProducts(helper.page);
 	});
 
 	function fetchProducts(page: number) {
+		doneFetching = false;
 		fetch(
 			`${'https://colruyt.merilairon.com/api'}/products/changes?&page=${page}&size=${pageSize}&fromPerc=${fromPercentage || -1000}&toPerc=${toPercentage || 0}`
 		)
@@ -29,9 +31,11 @@
 					helper.end = data.total;
 				}
 				products.set(data.products);
+				doneFetching = true;
 			})
 			.catch((error) => {
 				console.log(error);
+				doneFetching = true;
 				return [];
 			});
 	}
@@ -50,11 +54,15 @@
 	};
 </script>
 
-{#if $products.length === 0}
+{#if $products.length === 0 && !doneFetching}
 	<div class="loading-state animate-pulse">
 		<div class="text-center">
 			<Spinner />
 		</div>
+	</div>
+{:else if $products.length === 0 && doneFetching}
+	<div class="loading-state">
+		<div class="text-center text-gray-900 dark:text-white">No products found</div>
 	</div>
 {:else}
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
