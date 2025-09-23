@@ -35,9 +35,7 @@
 		try {
 			doneFetching = false;
 			const response = await fetch(
-				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&order=
-				
-				&sort=${selectedSortOption}`
+				`https://colruyt.merilairon.com/api/promotions?page=${page}&size=${pageSize}&sort=${selectedSortOption}`
 			);
 			const data = await response.json();
 			helper.total = data.total;
