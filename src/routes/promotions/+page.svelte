@@ -1,23 +1,14 @@
 <script lang="ts">
-	import {
-		Badge,
-		Button,
-		Card,
-		Label,
-		Pagination,
-		PaginationItem,
-		PaginationNav,
-		Select,
-		Spinner
-	} from 'flowbite-svelte';
-	import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
+	import { Button, Label, Select } from 'flowbite-svelte';
 	import promotions from '../../stores/promotions';
 	import { onMount } from 'svelte';
 	import PromotionCard from '$lib/components/PromotionCard.svelte';
 	import { _, locale, locales } from 'svelte-i18n';
+	import Pagination from '$lib/components/Pagination.svelte';
+	import StateDisplay from '$lib/components/StateDisplay.svelte';
 
 	let pageSize = 60;
-	let helper = $state({ start: 1, end: pageSize, page: 1, total: 100 });
+	let helper = $state({ page: 1, total: 100 });
 	let filteredPromotions = $state($promotions);
 	let selectedSortOption = $state('desc');
 	let sortOptions = [
@@ -26,7 +17,25 @@
 	];
 	let doneFetching = $state(false);
 
-	//TODO: add infinite scroll or something
+	let paginationData = $derived(() => {
+		const totalPages = Math.ceil(helper.total / pageSize);
+		const pages = Array.from({ length: totalPages }, (_, i) => ({
+			name: (i + 1).toString(),
+			href: `/promotions?page=${i + 1}`
+		}));
+		return {
+			currentPage: helper.page,
+			totalPages: totalPages,
+			pages: pages
+		};
+	});
+
+	let paginationStatus = $derived(() => {
+		const start = pageSize * (helper.page - 1) + 1;
+		const end = Math.min(start + pageSize - 1, helper.total);
+		return { start, end, total: helper.total };
+	});
+
 	onMount(async () => {
 		await fetchPromotions(helper.page);
 	});
@@ -49,10 +58,6 @@
 
 	const handlePageChange = (pageNr: number) => {
 		helper.page = pageNr;
-
-		helper.start = pageSize * (helper.page - 1) + 1;
-		helper.end = helper.start + pageSize - 1;
-
 		fetchPromotions(helper.page);
 	};
 
@@ -79,25 +84,22 @@
 		<Button class="mt-7 w-20 cursor-pointer" onclick={resetSort}>Reset</Button>
 	</div>
 </div>
-{#if $promotions.length === 0 && !doneFetching}
-	<div class="loading-state animate-pulse">
-		<div class="text-center">
-			<Spinner />
-		</div>
-	</div>
-{:else if $promotions.length === 0 && doneFetching}
-	<div class="loading-state">
-		<div class="text-center text-gray-900 dark:text-white">No products found</div>
-	</div>
-{:else}
+
+<StateDisplay 
+    loading={!doneFetching} 
+    empty={filteredPromotions.length === 0 && doneFetching} 
+    emptyText="No promotions found" 
+/>
+
+{#if filteredPromotions.length > 0}
 	<div class="mb-4 flex flex-col items-center justify-center gap-2">
 		<div class="text-sm text-gray-700 dark:text-gray-400">
 			{$_('pagination.showing')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
+			<span class="font-semibold text-gray-900 dark:text-white">{paginationStatus.start}</span>
 			{$_('pagination.to')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
+			<span class="font-semibold text-gray-900 dark:text-white">{paginationStatus.end}</span>
 			{$_('pagination.of')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
+			<span class="font-semibold text-gray-900 dark:text-white">{paginationStatus.total}</span>
 			{$_('pagination.entries')}
 		</div>
 	</div>
@@ -109,40 +111,5 @@
 			<PromotionCard {promotion} />
 		{/each}
 	</div>
-	<div class="mb-4 flex flex-col items-center justify-center gap-2">
-		<div class="text-sm text-gray-700 dark:text-gray-400">
-			{$_('pagination.showing')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.start}</span>
-			{$_('pagination.to')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.end}</span>
-			{$_('pagination.of')}
-			<span class="font-semibold text-gray-900 dark:text-white">{helper.total}</span>
-			{$_('pagination.entries')}
-		</div>
-
-		<PaginationNav
-			currentPage={helper.page}
-			onPageChange={handlePageChange}
-			totalPages={Math.ceil(helper.total / pageSize)}
-			table
-			size="large"
-		>
-			{#snippet prevContent()}
-				<span class="sr-only">Previous</span>
-				<ArrowLeftOutline class="h-5 w-5" />
-			{/snippet}
-			{#snippet nextContent()}
-				<span class="sr-only">Next</span>
-				<ArrowRightOutline class="h-5 w-5" />
-			{/snippet}
-		</PaginationNav>
-	</div>
+	<Pagination pages={paginationData} onPageChange={handlePageChange} />
 {/if}
-
-<style>
-	.loading-state {
-		display: grid;
-		place-items: center;
-		min-height: 200px;
-	}
-</style>

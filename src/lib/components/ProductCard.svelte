@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge, Button, Card } from 'flowbite-svelte';
-	import { AppleFullOutline, FireOutline, HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
+	import { AppleFullOutline, HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 	import { _, locale, locales } from 'svelte-i18n';
 
@@ -30,11 +30,14 @@
 	});
 </script>
 
-<Card data-index={product.productId} class="p-8">
+<Card
+	data-index={product.productId}
+	class="p-8 transition-transform duration-200 ease-in-out hover:scale-105"
+>
 	<div class="card">
-		<a href="/products/{product.productId}">
+		<a href="/products/{product.name.toLowerCase().replace(/\s/g, '-')}-{product.productId}" aria-label={`View details for ${product.LongName}`}>
 			<div class="card-image">
-				<img alt={product.name} class="rounded-xl" src={product.squareImage} />
+				<img alt={product.name} class="rounded-xl" src={product.squareImage} loading="lazy"/>
 			</div>
 			<div class="px-5 pb-5">
 				<h5
@@ -79,6 +82,7 @@
 					pill
 					color="red"
 					style="margin-left: auto; order: 0;"
+                    aria-label="Add to favourites"
 				>
 					{#if $favourites.includes(product.productId)}
 						<HeartSolid class="h-6 w-6" />

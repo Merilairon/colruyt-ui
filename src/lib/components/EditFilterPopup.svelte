@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Modal, Label, Checkbox, Button, Input, Select } from 'flowbite-svelte';
 	import filters from '../../stores/filters';
-	let { formModal = $bindable() } = $props();
+	let { formModal = $bindable(), filter, filterIndex } = $props();
 	let error = $state('');
 	let filterType = $state('percentage');
 
 	function onaction({ action, data }: { action: string; data: FormData }) {
 		error = '';
-		if (action === 'add') {
+		if (action === 'edit') {
 			const filterName = data.get('filterName')?.toString() || '';
 			const newFilter: { filterName: string; fromPercentage?: number; toPercentage?: number; category?: string } = { filterName };
 
@@ -27,13 +27,19 @@
 			}
 
 			filters.update((f) => {
-				f.push(newFilter);
+                f[filterIndex] = newFilter;
 				return f;
 			});
 		}
 		formModal = false;
 		return false;
 	}
+
+    $effect(() => {
+        if(filter.category) {
+            filterType = 'category'
+        }
+    })
 </script>
 
 <Modal form bind:open={formModal} size="xs" {onaction}>
@@ -44,7 +50,7 @@
 		{/if}
 		<Label class="space-y-2">
 			<span>Filter Name</span>
-			<Input type="text" name="filterName" placeholder="e.g., High Discounts" required />
+			<Input type="text" name="filterName" placeholder="e.g., High Discounts" required value={filter.filterName}/>
 		</Label>
 		<Label class="space-y-2">
 			<span>Filter Type</span>
@@ -60,19 +66,19 @@
 		{#if filterType === 'percentage'}
 			<Label class="space-y-2">
 				<span>From Percentage</span>
-				<Input type="number" name="fromPercentage" placeholder="-100" required />
-			</Label>
+				<Input type="number" name="fromPercentage" placeholder="-100" required value={filter.fromPercentage}/>
+		</Label>
 			<Label class="space-y-2">
 				<span>To Percentage</span>
-				<Input type="number" name="toPercentage" placeholder="0" required />
-			</Label>
+				<Input type="number" name="toPercentage" placeholder="0" required value={filter.toPercentage}/>
+		</Label>
 		{:else}
 			<Label class="space-y-2">
 				<span>Category</span>
-				<Input type="text" name="category" placeholder="e.g., Fruits" required />
-			</Label>
+				<Input type="text" name="category" placeholder="e.g., Fruits" required value={filter.category}/>
+		</Label>
 		{/if}
 
-		<Button type="submit" value="add">Add Filter</Button>
+		<Button type="submit" value="edit">Save Changes</Button>
 	</div>
 </Modal>

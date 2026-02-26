@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 	import { A, Button, Spinner } from 'flowbite-svelte';
 	import { Chart } from '@flowbite-svelte-plugins/chart';
 	import { ArrowLeftOutline } from 'flowbite-svelte-icons';
@@ -77,8 +77,9 @@
 
 	onMount(async () => {
 		try {
+            const productId = $page.params.slug.split('-').pop();
 			const response = await fetch(
-				`https://colruyt.merilairon.com/api/products/${page.params.slug}`
+				`https://colruyt.merilairon.com/api/products/${productId}`
 			);
 			product = await response.json();
 			options = {

@@ -3,8 +3,9 @@ import { persisted } from 'svelte-persisted-store';
 const filters = persisted<
 	{
 		filterName: string;
-		fromPercentage: number;
-		toPercentage: number;
+		fromPercentage?: number;
+		toPercentage?: number;
+		category?: string;
 	}[]
 >('filters', [
 	{ filterName: '-100% to -50%', fromPercentage: -100, toPercentage: -50 },

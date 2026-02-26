@@ -8,7 +8,7 @@
 	import { replaceState } from '$app/navigation';
 	import { _, locale, locales } from 'svelte-i18n';
 
-	let { fromPercentage = $bindable(), toPercentage = $bindable() } = $props();
+	let { fromPercentage = $bindable(), toPercentage = $bindable(), category = $bindable() } = $props();
 
 	// svelte-ignore non_reactive_update
 	let pageSize = 60;
@@ -21,9 +21,11 @@
 
 	function fetchProducts(page: number) {
 		doneFetching = false;
-		fetch(
-			`${'https://colruyt.merilairon.com/api'}/products/changes?&page=${page}&size=${pageSize}&fromPerc=${fromPercentage || -1000}&toPerc=${toPercentage || 0}`
-		)
+		let url = `${'https://colruyt.merilairon.com/api'}/products/changes?&page=${page}&size=${pageSize}&fromPerc=${fromPercentage || -1000}&toPerc=${toPercentage || 0}`;
+		if (category) {
+			url += `&category=${category}`;
+		}
+		fetch(url)
 			.then((response) => response.json())
 			.then((data) => {
 				helper.total = data.total;

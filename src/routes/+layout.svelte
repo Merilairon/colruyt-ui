@@ -1,3 +1,4 @@
+
 <script lang="ts">
 	import '../app.css';
 	import { _, locale, locales } from 'svelte-i18n';
@@ -34,6 +35,13 @@
 			window.addEventListener('scroll', () => {
 				hideSpeedDial = window.scrollY <= 200;
 			});
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((reg) => {
+                        console.log('Service worker registered.', reg);
+                    });
+            }
 		}
 	});
 
@@ -44,6 +52,7 @@
 
 <svelte:head>
 	<link href="/images/colruit-logo.svg" rel="icon" type="image/svg" />
+    <link rel="manifest" href="/manifest.json">
 </svelte:head>
 
 <div class="relative px-8">

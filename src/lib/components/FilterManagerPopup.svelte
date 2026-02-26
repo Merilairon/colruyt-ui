@@ -18,7 +18,12 @@
 		CogOutline,
 		TrashBinOutline
 	} from 'flowbite-svelte-icons';
+	import EditFilterPopup from './EditFilterPopup.svelte';
 	let { managerModal = $bindable() } = $props();
+
+	let editFilterModal = $state(false);
+	let selectedFilter = $state(null);
+	let selectedFilterIndex = $state(-1);
 
 	const closeModal = () => (managerModal = false);
 	const orderUp = (index: number) => {
@@ -43,8 +48,21 @@
 			return filters;
 		});
 	};
+
+	const openEditFilterModal = (index: number) => {
+		selectedFilter = $filters[index];
+		selectedFilterIndex = index;
+		editFilterModal = true;
+	};
 </script>
 
+{#if editFilterModal}
+	<EditFilterPopup
+		bind:formModal={editFilterModal}
+		filter={selectedFilter}
+		filterIndex={selectedFilterIndex}
+	/>
+{/if}
 <Modal bind:open={managerModal} size="lg">
 	<div class="flex flex-col space-y-6">
 		<h3 class="mb-4 text-center text-xl font-medium text-gray-900 dark:text-white">
@@ -59,6 +77,7 @@
 					<TableHeadCell align="right">Filter Name</TableHeadCell>
 					<TableHeadCell align="right">From Percentage</TableHeadCell>
 					<TableHeadCell align="right">To Percentage</TableHeadCell>
+					<TableHeadCell align="right">Category</TableHeadCell>
 					<TableHeadCell align="center">Actions</TableHeadCell>
 				</TableHead>
 				<TableBody>
@@ -66,21 +85,18 @@
 						<TableBodyRow>
 							<TableBodyCell align="center">
 								{#if index !== 0}
-									<Button class="cursor-pointer" onclick={() => orderUp(index)}
-										><ArrowUpOutline /></Button
-									>
+									<Button class="cursor-pointer" onclick={() => orderUp(index)}><ArrowUpOutline /></Button>
 								{/if}
 								{#if index !== $filters.length - 1}
-									<Button class="cursor-pointer" onclick={() => orderDown(index)}
-										><ArrowDownOutline /></Button
-									>
+									<Button class="cursor-pointer" onclick={() => orderDown(index)}><ArrowDownOutline /></Button>
 								{/if}
 							</TableBodyCell>
 							<TableBodyCell align="right">{filter.filterName}</TableBodyCell>
-							<TableBodyCell align="right">{filter.fromPercentage}%</TableBodyCell>
-							<TableBodyCell align="right">{filter.toPercentage}%</TableBodyCell>
+							<TableBodyCell align="right">{filter.fromPercentage ? `${filter.fromPercentage}%` : 'N/A'}</TableBodyCell>
+							<TableBodyCell align="right">{filter.toPercentage ? `${filter.toPercentage}%` : 'N/A'}</TableBodyCell>
+							<TableBodyCell align="right">{filter.category || 'N/A'}</TableBodyCell>
 							<TableBodyCell align="center">
-								<Button class="cursor-pointer">
+								<Button class="cursor-pointer" onclick={() => openEditFilterModal(index)}>
 									<CogOutline />
 								</Button>
 								<Button class="cursor-pointer" onclick={() => RemoveFilter(index)}>
