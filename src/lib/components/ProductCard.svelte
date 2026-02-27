@@ -3,6 +3,7 @@
 	import { AppleFullOutline, HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import favourites from '../../stores/favourite';
 	import { _, locale, locales } from 'svelte-i18n';
+    import { slugify } from '../slugify';
 
 	let { includeFavouriteButton = false, product } = $props();
 
@@ -35,7 +36,7 @@
 	class="p-8 transition-transform duration-200 ease-in-out hover:scale-105"
 >
 	<div class="card">
-		<a href="/products/{product.name.toLowerCase().replace(/\s/g, '-')}-{product.productId}" aria-label={`View details for ${product.LongName}`}>
+		<a href="/products/{slugify(product.name)}-{product.productId}" aria-label={`View details for ${product.LongName}`}>
 			<div class="card-image">
 				<img alt={product.name} class="rounded-xl" src={product.squareImage} loading="lazy"/>
 			</div>
