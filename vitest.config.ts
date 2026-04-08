@@ -8,6 +8,13 @@ export default defineConfig({
       hot: !process.env.VITEST,
     }),
   ],
+  resolve: {
+    conditions: ['browser'],
+    alias: {
+      '$app/environment': '/home/runner/work/colruyt-ui/colruyt-ui/src/__mocks__/app-environment.ts',
+      '$app/stores': '/home/runner/work/colruyt-ui/colruyt-ui/src/__mocks__/app-stores.ts',
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
