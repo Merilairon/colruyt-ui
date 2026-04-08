@@ -38,7 +38,7 @@ A modern, feature-rich web application that provides an enhanced browsing experi
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
+|-------|------------|
 | Framework | [SvelteKit 2](https://kit.svelte.dev) + [Svelte 5](https://svelte.dev) |
 | Language | TypeScript |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com) |
@@ -53,8 +53,8 @@ A modern, feature-rich web application that provides an enhanced browsing experi
 
 Make sure you have the following installed before getting started:
 
-- **Node.js** ≥ 20 (the project enforces this via `.npmrc`)
-- **npm** ≥ 10
+- **Node.js** 20 or newer recommended
+- **npm** a recent version compatible with your installed Node.js release
 
 Verify your versions:
 
@@ -120,7 +120,7 @@ Preview the production build locally before deploying:
 npm run preview
 ```
 
-> **Note:** The build script sets `CF_PAGES=1`, which activates the Cloudflare Pages adapter. If you need to target a different deployment environment, update the adapter in `svelte.config.js`. See [SvelteKit adapters](https://kit.svelte.dev/docs/adapters) for more information.
+> **Note:** The local `build` script uses Windows-specific syntax to set `CF_PAGES=1`. On Cloudflare Pages (Linux), set the build command to `CF_PAGES=1 npm run build` so the Cloudflare Pages adapter is activated correctly. If you need to target a different deployment environment, update the adapter in `svelte.config.js`. See [SvelteKit adapters](https://kit.svelte.dev/docs/adapters) for more information.
 
 ---
 
@@ -209,9 +209,9 @@ The application supports three languages out of the box:
 
 | Code | Language |
 |------|----------|
-| `nl` | Dutch (default) |
+| `nl` | Dutch |
 | `fr` | French |
-| `en` | English |
+| `en` | English (default) |
 
 Translation files are located in `src/locales/`. The active locale can be switched from the navigation bar. Adding a new language requires:
 
@@ -222,7 +222,7 @@ Translation files are located in `src/locales/`. The active locale can be switch
 
 ## Deployment
 
-The project is configured for **Cloudflare Pages** via `@sveltejs/adapter-cloudflare`.
+This project can be deployed to **Cloudflare Pages**. With the current SvelteKit setup, the deployment target is detected automatically in the Cloudflare environment via `@sveltejs/adapter-auto`.
 
 To deploy manually:
 
@@ -237,8 +237,8 @@ To deploy manually:
 For automatic deployments, connect the repository to a Cloudflare Pages project and set the following build settings:
 
 | Setting | Value |
-|---|---|
-| Build command | `npm run build` |
+|---------|-------|
+| Build command | `CF_PAGES=1 npm run build` |
 | Build output directory | `.svelte-kit/cloudflare` |
 
 ---
