@@ -34,7 +34,7 @@ describe('promotions store', () => {
 	});
 
 	it('notifies subscribers when the value changes', () => {
-		const values: any[][] = [];
+		const values: unknown[][] = [];
 		const unsubscribe = promotions.subscribe((v) => values.push(v));
 
 		promotions.set([{ promotionId: 'p1' }]);

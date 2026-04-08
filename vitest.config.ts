@@ -1,6 +1,7 @@
 
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import path from 'path';
 
 export default defineConfig({
   plugins: [
@@ -11,8 +12,7 @@ export default defineConfig({
   resolve: {
     conditions: ['browser'],
     alias: {
-      '$app/environment': '/home/runner/work/colruyt-ui/colruyt-ui/src/__mocks__/app-environment.ts',
-      '$app/stores': '/home/runner/work/colruyt-ui/colruyt-ui/src/__mocks__/app-stores.ts',
+      '$app/environment': path.resolve('./src/__mocks__/app-environment.ts'),
     },
   },
   test: {

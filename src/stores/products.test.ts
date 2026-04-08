@@ -31,7 +31,7 @@ describe('products store', () => {
 	});
 
 	it('notifies subscribers when the value changes', () => {
-		const values: any[][] = [];
+		const values: unknown[][] = [];
 		const unsubscribe = products.subscribe((v) => values.push(v));
 
 		products.set([{ productId: '99' }]);
