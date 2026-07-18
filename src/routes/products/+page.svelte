@@ -21,15 +21,21 @@
 			includeUnavailable = page.url.searchParams.get('includeUnavailable') === 'true';
 		}
 		if (page.url.searchParams.get('page')) {
-			helper.page = parseInt(page.url.searchParams.get('page') as string);
-			helper.start += pageSize * (helper.page - 1);
-			helper.end = helper.start + pageSize - 1;
+			const pageParam = page.url.searchParams.get('page');
+			if (pageParam) {
+				helper.page = parseInt(pageParam);
+				helper.start += pageSize * (helper.page - 1);
+				helper.end = helper.start + pageSize - 1;
+			}
 		}
 		if (page.url.searchParams.get('pageSize')) {
-			pageSize = parseInt(page.url.searchParams.get('pageSize') as string);
+			const pageSizeParam = page.url.searchParams.get('pageSize');
+			if (pageSizeParam) {
+				pageSize = parseInt(pageSizeParam);
+			}
 		}
 		if (page.url.searchParams.get('searchValue')) {
-			savedSearchValue = page.url.searchParams.get('searchValue') as string;
+			savedSearchValue = page.url.searchParams.get('searchValue') || '';
 		}
 		await fetchProducts(helper.page, !includeUnavailable, savedSearchValue, selectedSortValue);
 	});
@@ -42,7 +48,10 @@
 		helper.start = 1;
 		helper.end = pageSize;
 
-		savedSearchValue = (event.target as HTMLInputElement).value.toLowerCase();
+		const target = event.target as HTMLInputElement;
+		if (target) {
+			savedSearchValue = target.value.toLowerCase();
+		}
 
 		page.url.searchParams.set('searchValue', savedSearchValue);
 		page.url.searchParams.set('page', helper.page.toString());
@@ -69,11 +78,12 @@
 		)
 			.then((response) => response.json())
 			.then((data) => {
-				helper.total = data.total;
+				if (!data) return;
+				helper.total = data.total || 0;
 				if (pageSize > data.total) {
 					helper.end = data.total;
 				}
-				products.set(data.products);
+				products.set(data.products || []);
 			})
 			.catch((error) => {
 				console.log(error);

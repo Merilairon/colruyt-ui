@@ -68,8 +68,8 @@
 					</Badge>
 					<div class="text-right">
 						<span class="text font-bold text-orange-500 dark:text-orange-500"
-							>€{product.prices[0].quantityPrice}{$_('page.products.from')}{product.prices[0]
-								.quantityPriceQuantity}
+							>€{product.prices[0]?.quantityPrice}{$_('page.products.from')}{product.prices[0]
+								?.quantityPriceQuantity}
 						</span>
 					</div>
 				</div>

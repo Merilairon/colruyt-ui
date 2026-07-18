@@ -92,7 +92,7 @@
 					{
 						...options.series[0],
 						data: product?.prices
-							.map((p: any) => p)
+							.filter((p: any) => p)
 							.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
 							.map((p: any) => {
 								return {
@@ -104,7 +104,7 @@
 					{
 						...options.series[1],
 						data: product?.prices
-							.map((p: any) => p)
+							.filter((p: any) => p)
 							.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
 							.map((p: any) => {
 								return {
