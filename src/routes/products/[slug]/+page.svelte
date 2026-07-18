@@ -77,7 +77,11 @@
 
 	onMount(async () => {
 		try {
-            const productId = $page.params.slug.split('-').pop();
+            const productId = $page.params.slug?.split('-').pop();
+			if (!productId) {
+				console.error('Product ID not found in URL');
+				return;
+			}
 			const response = await fetch(
 				`https://colruyt.merilairon.com/api/products/${productId}`
 			);
